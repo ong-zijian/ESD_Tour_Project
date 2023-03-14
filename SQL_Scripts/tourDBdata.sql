@@ -38,8 +38,8 @@ TID int NOT NULL,
 cName varchar(256) NOT NULL,
 Postcode char(6) NOT NULL,
 PRIMARY KEY (BID, startDateTime),
-FOREIGN KEY (TID) REFERENCES idv_tours(TID),
-FOREIGN KEY (startDateTime) REFERENCES idv_tours(startDateTime)
+-- FOREIGN KEY (TID) REFERENCES idv_tours(TID),
+-- FOREIGN KEY (startDateTime) REFERENCES idv_tours(startDateTime)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS payments;
