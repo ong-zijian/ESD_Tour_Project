@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from dotenv import load_dotenv
 
+# To load the environment variable
 load_dotenv()
 
 from datetime import datetime
@@ -22,28 +23,24 @@ db = SQLAlchemy(app)
 
 CORS(app)  
 
+# Create Class for the Booking
 class Booking(db.Model):
     __tablename__ = 'bookings'
 
-    booking_id = db.Column(db.Integer, primary_key=True)
-    startDateTime = db.Column(db.datetime, primary_key=True nullable=False)
-    Tour_ID = db.Column(db.Integer, nullable=False)
+    BID = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    startDateTime = db.Column(db.DateTime(timezone=True), primary_key=True)
+    TID = db.Column(db.Integer, nullable=False)
     cName = db.Column(db.String(256), nullable=False)
     Postcode = db.Column(db.String(6), nullable=False)
 
     def json(self):
         dto = {
-            'booking_id': self.booking_id,
+            'booking_id': self.BID,
             'startDateTime': self.startDateTime,
-            'Tour_ID': self.Tour_ID,
+            'Tour_ID': self.TID,
             'cName': self.cName,
             'Postcode': self.Postcode
         }
-
-        # dto['order_item'] = []
-        # for oi in self.order_item:
-        #     dto['order_item'].append(oi.json())
-
         return dto
 
 
@@ -70,7 +67,7 @@ def get_all():
 
 @app.route("/booking/<string:booking_id>")
 def find_by_booking_id(booking_id):
-    booking = Booking.query.filter_by(booking_id=booking_id).first()
+    booking = Booking.query.filter_by(BID=booking_id).first()
     if booking:
         return jsonify(
             {
@@ -91,18 +88,19 @@ def find_by_booking_id(booking_id):
 
 @app.route("/booking", methods=['POST'])
 def create_booking():
-    cName = request.json.get('cName', None)
-    booking = Booking(cName=cName, status='NEW')
+    cName = request.json.get("cName", None)
+    TourID = request.json.get("TID", None)
+    startDateTime = request.json.get("startDateTime", None)
+    Postcode = request.json.get("Postcode", None)
 
-    booking_item = request.json.get('booking_item')
-    ################################ !!! figure this one out###################################
-    # for item in booking_item:
-    #     booking.booking_item.append(Order_Item(
-    #         book_id=item['book_id'], quantity=item['quantity']))
+
+    booking = Booking(cName=cName, TID=TourID, startDateTime=startDateTime, Postcode=Postcode)
+
 
     try:
-        db.session.add(booking)
-        db.session.commit()
+        with db.session.begin():
+            db.session.add(booking)
+            db.session.flush()
     except Exception as e:
         return jsonify(
             {
@@ -110,8 +108,8 @@ def create_booking():
                 "message": "An error occurred while creating the order. " + str(e)
             }
         ), 500
-    
-    print(json.dumps(booking.json(), default=str)) # convert a JSON object to a string and print
+
+    print(json.dumps(booking.json(), default=str))
     print()
 
     return jsonify(
@@ -122,10 +120,10 @@ def create_booking():
     ), 201
 
 
-@app.route("/booking/<string:order_id>", methods=['PUT'])
+@app.route("/booking/<string:booking_id>", methods=['PUT'])
 def update_booking(booking_id):
     try:
-        booking = Booking.query.filter_by(booking_id=booking_id).first()
+        booking = Booking.query.filter_by(BID=booking_id).first()
         if not booking:
             return jsonify(
                 {
@@ -139,8 +137,8 @@ def update_booking(booking_id):
 
         # update status
         data = request.get_json()
-        if data['status']:
-            booking.status = data['status']
+        if data['cName']:
+            booking.cName = data['cName']
             db.session.commit()
             return jsonify(
                 {
