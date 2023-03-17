@@ -11,6 +11,8 @@ load_dotenv()
 from datetime import datetime
 import json
 
+headers = {"Content-Type": "application/json"}
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("tourdbKey")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -47,7 +49,7 @@ class idv_tours(db.Model):
     __tablename__ = 'idv_tours'
 
     startDateTime = db.Column(db.DateTime(timezone=True), primary_key=True)
-    TID = db.Column(db.ForeignKey('tours.TID'), primary_key=True, nullable=False)
+    TID = db.Column(db.ForeignKey('tours.TID', ondelete='CASCADE'), primary_key=True, nullable=False)
     endDateTime = db.Column(db.DateTime(timezone=True))
     TotalSlot = db.Column(db.Integer, nullable=False)
     TakenSlot = db.Column(db.Integer, nullable=False)
@@ -56,6 +58,20 @@ class idv_tours(db.Model):
     def json(self):
         return {'TID':self.TID, 'startDateTime':self.startDateTime, 'endDateTime':self.endDateTime, 'TotalSlot':self.TotalSlot, 'TakenSlot':self.TakenSlot}
     
+from werkzeug.routing import BaseConverter
+
+class DateTimeConverter(BaseConverter):
+    """Custom converter for datetime objects."""
+
+    def to_python(self, value):
+        return datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+
+    def to_url(self, value):
+        return value.strftime('%Y-%m-%dT%H:%M:%S')
+    
+app.url_map.converters['datetime'] = lambda pattern: DateTimeConverter(pattern)
+
+
 # Basic Route for get all function
 @app.route("/tour")
 def get_all():
@@ -139,46 +155,72 @@ def create_tour():
     ), 201
 
 
-@app.route("/book/<string:isbn13>", methods=['PUT'])
-def update_book(isbn13):
-    book = Book.query.filter_by(isbn13=isbn13).first()
-    if book:
-        data = request.get_json()
-        if data['title']:
-            book.title = data['title']
-        if data['price']:
-            book.price = data['price']
-        if data['availability']:
-            book.availability = data['availability'] 
-        db.session.commit()
-        return jsonify(
-            {
-                "code": 200,
-                "data": book.json()
-            }
-        )
-    return jsonify(
-        {
+# @app.route("/tour/<string:TID>/<datetime:startDateTime>", methods=['PUT'])
+# def update_tour(TID, startDateTime):
+#     tour = idv_tours.query.filter(idv_tours.TID == TID, idv_tours.startDateTime == startDateTime).first()
+#     if tour:
+#         data = request.get_json()
+#         #return str(data['details'][0]["TotalSlot"])
+#         if 'TakenSlot' in data and data['TakenSlot']:
+#             tour.TakenSlot += 1
+#         db.session.commit()
+#         return jsonify(
+#             {
+#                 "code": 200,
+#                 "data": tour.json()
+#             }
+#         )
+#     return jsonify(
+#         {
+#             "code": 404,
+#             "data": {
+#                 "Takenslot": 0
+#             },
+#             "message": "Tour not found."
+#         }
+#     ), 404
+
+@app.route("/tour/<string:TID>/<datetime:startDateTime>", methods=['PUT'])
+def update_tour(TID, startDateTime):
+    idv_tour = idv_tours.query.filter_by(TID=TID, startDateTime=startDateTime).first()
+    
+    if not idv_tour:
+        return jsonify({
             "code": 404,
-            "data": {
-                "isbn13": isbn13
-            },
-            "message": "Book not found."
-        }
-    ), 404
+            "message": "Tour not found."
+        }), 404
+
+    data = request.get_json()
+    taken_slots = data.get('TakenSlot')
+
+    if taken_slots is None:
+        return jsonify({
+            "code": 400,
+            "message": "Missing 'TakenSlot' parameter."
+        }), 400
+
+    idv_tour.TakenSlot += taken_slots
+    db.session.commit()
+
+    return jsonify({
+        "code": 200,
+        "message": "Tour updated successfully.",
+        "data": idv_tour.json()
+    }), 200
 
 
-@app.route("/book/<string:title>", methods=['DELETE'])
-def delete_book(Title):
-    tour = Tour.query.filter_by(Title=Title).first()
-    if book:
-        db.session.delete(book)
+@app.route("/tour/<string:TID>", methods=['DELETE'])
+def delete_tour(TID):
+    tour = Tour.query.filter_by(TID=TID).first()
+    if tour:
+        idv_tours.query.filter_by(TID=TID).delete()
+        db.session.delete(tour)
         db.session.commit()
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "isbn13": isbn13
+                    "TID": TID
                 }
             }
         )
@@ -186,11 +228,12 @@ def delete_book(Title):
         {
             "code": 404,
             "data": {
-                "isbn13": isbn13
+                "TID": TID
             },
-            "message": "Book not found."
+            "message": "Tour not found."
         }
     ), 404
+
 app.logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
