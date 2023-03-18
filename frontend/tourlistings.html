@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required Meta Tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Document Title, Description, and Author -->
+  <title>Wave - Bootstrap 5 One Page Template</title>
+  <meta name="description" content="Wave is a Bootstrap 5 One Page Template.">
+  <meta name="author" content="BootstrapBrain">
+
+  <!-- Favicon and Touch Icons -->
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/favicon/favicon-512x512.png">
+
+  <!-- Google Fonts Files -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&family=Satisfy&display=swap" rel="stylesheet">
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="./assets/css/wave-bsb.css">
+</head>
+<body>
+ <!-- Navbar 1 - Bootstrap Brain Component -->
+ <nav class="navbar navbar-expand-md wave-bg-blue bsb-navbar bsb-navbar-hover bsb-navbar-caret">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">
+     <h1>Merlion Tours</h1> 
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+      
+    </button>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+      <div class="offcanvas-header">
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul id="bsb-tpl-navbar" class="navbar-nav justify-content-end flex-grow-1">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./aboutus.html" >About Us</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              For Tourists
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="#">Booking Portal</a>
+              <a class="dropdown-item" href="#">Enquiry</a>
+            </div>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                For Guides
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="#">FAQ</a>
+                <a class="dropdown-item" href="#">Job Portal</a>
+                <a class="dropdown-item" href="#">Enquiry</a>
+              </div>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wave-bg-blue py-5 py-xl-8 py-xxl-10">
+    <div class="container-fluid">
+    <!-- Side Nav Bar  -->
+    <nav class="grid-col-l-3">
+        <form action="/search" name="frm-location">
+        <input type="hidden" name="featured_filter" value="false">
+        <div class="type-ahead-container">
+        <span class="space-mbs clear-input-wrapper has-clear">
+        <span class="clear-input-wrapper"><input type="search" name="search_location" placeholder="Postcode or location" title="Location" id="search-location" autocomplete="off" data-type-ahead="channel:location" aria-autocomplete="list" aria-owns="header-search-location-type-ahead" value=""><span class="icn-clear txt-quaternary clear-input"></span></span>
+        </span>
+        </div>
+        <!-- District filter -->
+        <label for="distanceRefine" class="hide-visually">District</label>
+        <div class="grid-row">
+        <div class="grid-col-9">
+        <span class="select-wrapper">
+        <select name="distance">
+        <option selected="">
+        Choose district
+        </option>
+        <option value="North">
+        North
+        </option>
+        <option value="South">
+        South
+        </option>
+        <option value="East">
+        East
+        </option>
+        <option value="West">
+        West
+        </option>
+        <option value="Nationwide">
+        Nationwide
+        </option>
+        </select>
+        </span>
+        </div>
+            <div class="grid-col-3">
+            <button type="submit" class="btn-primary btn-full-width">Go</button>
+            </div>
+        </div>
+        </form>
+        <div class="txt-right">
+        <button data-q="location-nearby-btn" data-radiotoggle="channel:nearbyFilter,toggleSelf:true,selfBroadcast:true,className:hide-fully" class="btn-link space-mts txt-secondary">Nearby<span class="icn-dropdown iconu-xs space-mls"></span></button>
+        </div>
+        <div data-q="location-nearby-panel" class="space-pts hide-fully" data-radiotoggle="channel:nearbyFilter,toggleSelf:true,selfBroadcast:false,className:hide-fully">
+        </div>    
+        <!-- Choose tour type -->
+        <h4 class="h3-responsive">Tour type</h4>
+        <ul>
+        <li>
+            <a class="space-mrxs" href=#">Local Food
+            </a>
+        </li>
+        <li>
+            <a class="space-mrxs" href="#">Street Photography
+            </a>
+        </li>
+        <li>
+            <a class="space-mrxs" href="/flats-houses/property-for-sale/other">Activities
+            </a>
+        </li>
+        </ul> 
+     </nav>
+    
+    </div>
+    </div>
+  </div> 
+</div>
