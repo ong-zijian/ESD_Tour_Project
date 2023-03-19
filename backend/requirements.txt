@@ -1,16 +1,9 @@
 dateparser==1.1.7
-dictionary==1.0
 dnspython==2.3.0
 Flask==2.2.2
 Flask-Cors==3.0.10
 Flask-SQLAlchemy==3.0.2
-importlib-metadata==6.0.0
-itsdangerous==2.1.2
-Jinja2==3.1.2
 jsonschema==4.17.3
-markdown-it-py==2.2.0
-MarkupSafe==2.1.1
-mdurl==0.1.2
 mysql-connector-python==8.0.31
 python-dateutil==2.8.2
 python-dotenv==0.21.1
