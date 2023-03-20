@@ -4,20 +4,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 import os, sys
-from os import environ
-
-import requests
-#from invokes import invoke_http
+from invokes import invoke_http
 
 #import amqp_setup
-import pika
+#import pika
 import json
 
 app = Flask(__name__)
 CORS(app)
 
-tour_URL = os.getenv("TourRoute")
-order_URL = "http://localhost:5001/order" 
+tour_URL = "http://localhost:5002/tour" 
+booking_URL = "http://localhost:5001/booking" 
 #activity_log_URL = "http://localhost:5003/activity_log"
 #error_URL = "http://localhost:5004/error"
 
@@ -46,7 +43,7 @@ def place_booking():
 
             return jsonify({
                 "code": 500,
-                "message": "place_order.py internal error: " + ex_str
+                "message": "place_booking.py internal error: " + ex_str
             }), 500
 
     # if reached here, not a JSON request.
@@ -59,9 +56,9 @@ def place_booking():
 def processPlaceBooking(booking):
     # 2. Send the order info {cart items}
     # Invoke the order microservice
-    print('\n-----Invoking order microservice-----')
-    booking_result = invoke_http(order_URL, method='POST', json=booking)
-    print('order_result:', booking_result)
+    print('\n-----Invoking booking microservice-----')
+    booking_result = invoke_http(booking_URL, method='POST', json=booking)
+    print('booking_result:', booking_result)
   
     # Check the order result; if a failure, send it to the error microservice.
     code = booking_result["code"]
@@ -75,7 +72,7 @@ def processPlaceBooking(booking):
         print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
 
         # invoke_http(error_URL, method="POST", json=order_result)
-        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.error", 
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="booking.error", 
             body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
         # make message persistent within the matching queues until it is received by some receiver 
         # (the matching queues have to exist and be durable and bound to the exchange)
@@ -88,26 +85,21 @@ def processPlaceBooking(booking):
         # 7. Return error
         return {
             "code": 500,
-            "data": {"order_result": booking_result},
-            "message": "Order creation failure sent for error handling."
+            "data": {"booking_result": booking_result},
+            "message": "Booking creation failure sent for error handling."
         }
-
-    # Notice that we are publishing to "Activity Log" only when there is no error in order creation.
-    # In http version, we first invoked "Activity Log" and then checked for error.
-    # Since the "Activity Log" binds to the queue using '#' => any routing_key would be matched 
-    # and a message sent to “Error” queue can be received by “Activity Log” too.
 
     else:
         # 4. Record new order
         # record the activity log anyway
-        #print('\n\n-----Invoking activity_log microservice-----')
-        print('\n\n-----Publishing the (order info) message with routing_key=order.info-----')        
+        print('\n\n-----Invoking activity_log microservice-----')
+        print('\n\n-----Publishing the (booking info) message with routing_key=order.info-----')        
 
-        # invoke_http(activity_log_URL, method="POST", json=order_result)            
-        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.info", 
+        #invoke_http(activity_log_URL, method="POST", json=order_result)            
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="booking.info", 
             body=message)
     
-    print("\nOrder published to RabbitMQ Exchange.\n")
+    print("\nBooking published to RabbitMQ Exchange.\n")
     # - reply from the invocation is not used;
     # continue even if this invocation fails
     
@@ -116,12 +108,5 @@ def processPlaceBooking(booking):
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
-    print("This is flask " + os.path.basename(__file__) + " for placing an order...")
+    print("This is flask " + os.path.basename(__file__) + " for placing a booking...")
     app.run(host="0.0.0.0", port=5100, debug=True)
-    # Notes for the parameters: 
-    # - debug=True will reload the program automatically if a change is detected;
-    #   -- it in fact starts two instances of the same flask program, and uses one of the instances to monitor the program changes;
-    # - host="0.0.0.0" allows the flask program to accept requests sent from any IP/host (in addition to localhost),
-    #   -- i.e., it gives permissions to hosts with any IP to access the flask program,
-    #   -- as long as the hosts can already reach the machine running the flask program along the network;
-    #   -- it doesn't mean to use http://0.0.0.0 to access the flask program.
