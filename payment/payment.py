@@ -101,7 +101,9 @@ def create_checkout_session():
             ]
         )
         return jsonify({"sessionId":checkout_session["id"]})
+    #activity log
     except Exception as e:
+        #error log
         return jsonify(error=str(e)),403
 
 @app.route("/success")
@@ -127,15 +129,18 @@ def stripe_webhook():
                 'code':400,
                 'message':'Invalid payload, sent for error handling'
                 }
+        #error log
     except stripe.error.SignatureVerificationError as e:
         return {
                 'code':400,
                 'message':'Invalid signature, sent for error handling'
                 }
+        #error log
     
     if event['type']=='checkout.session.completed':
         print ('Payment successful')
         create_payment()
+        #activity log
         
     return "Success", 200
 
@@ -150,7 +155,9 @@ def create_payment():
         db.session.add(payment)
         db.session.commit()
         print('Done creating')
+        #activity log
     except:
+        #error log
         print('error!!')
         print(traceback.format_exc())
         return jsonify(
