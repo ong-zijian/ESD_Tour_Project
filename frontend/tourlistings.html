@@ -21,6 +21,12 @@
 
   <!-- CSS Files -->
   <link rel="stylesheet" href="./assets/css/wave-bsb.css">
+
+    <!-- Vue 3 -->
+    <script src='https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.js'></script>
+    <!-- Vue 3: production version, optimized for size and speed -->
+    <!-- <script src='https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.prod.js'></script> -->
+
 </head>
 <body>
  <!-- Navbar 1 - Bootstrap Brain Component -->
@@ -67,76 +73,89 @@
       </div>
     </div>
   </div>
-</nav>
-<!-- 
-<div class="wave-bg-blue py-5 py-xl-8 py-xxl-10">
-    <div class="container-fluid"> -->
-    <!-- Side Nav Bar  -->
-    <nav class="nav flex-column">
+</nav>   
 
-        <form action="/search" name="frm-location">
-        <input type="hidden" name="featured_filter" value="false">
-        <div class="type-ahead-container">
-        <span class="space-mbs clear-input-wrapper has-clear">
-        <span class="clear-input-wrapper"><input type="search" name="search_location" placeholder="Postcode or location" title="Location" id="search-location" autocomplete="off" data-type-ahead="channel:location" aria-autocomplete="list" aria-owns="header-search-location-type-ahead" value=""><span class="icn-clear txt-quaternary clear-input"></span></span>
-        </span>
-        </div>
-        <!-- District filter -->
-        <label for="distanceRefine" class="hide-visually">District</label>
-        <div class="grid-row">
-        <div class="grid-col-9">
-        <span class="select-wrapper">
-        <select name="distance">
-        <option selected="">
-        Choose district
-        </option>
-        <option value="North">
-        North
-        </option>
-        <option value="South">
-        South
-        </option>
-        <option value="East">
-        East
-        </option>
-        <option value="West">
-        West
-        </option>
-        <option value="Nationwide">
-        Nationwide
-        </option>
-        </select>
-        </span>
-        </div>
-            <div class="grid-col-3">
-            <button type="submit" class="btn-primary btn-full-width">Go</button>
-            </div>
-        </div>
-        </form>
-        <div class="txt-right">
-        <button data-q="location-nearby-btn" data-radiotoggle="channel:nearbyFilter,toggleSelf:true,selfBroadcast:true,className:hide-fully" class="btn-link space-mts txt-secondary">Nearby<span class="icn-dropdown iconu-xs space-mls"></span></button>
-        </div>
-        <div data-q="location-nearby-panel" class="space-pts hide-fully" data-radiotoggle="channel:nearbyFilter,toggleSelf:true,selfBroadcast:false,className:hide-fully">
-        </div>    
-        <!-- Choose tour type -->
-        <h4 class="h3-responsive">Tour type</h4>
-        <ul>
-        <li>
-            <a class="space-mrxs" href=#">Local Food
-            </a>
-        </li>
-        <li>
-            <a class="space-mrxs" href="#">Street Photography
-            </a>
-        </li>
-        <li>
-            <a class="space-mrxs" href="/flats-houses/property-for-sale/other">Activities
-            </a>
-        </li>
-        </ul> 
-     </nav>
-    
-    </div>
-    </div>
-  </div> 
+<div id="main-container" class="container">
+
+  <h1 class="display-4">Tour Listing</h1>
+  <a id="filterBtn" class="btn btn-success">Filter</a>
+  <table class='table table-striped border-1'>
+      <thead class='table-dark'>
+          <tr>
+              <th>TID</th>
+              <th>Title 13</th>
+              <th>Description</th>
+              <th>Postcode</th>
+          </tr>
+      </thead>
+    <tbody id=toursTable"></tbody>
+</table>
+  <a id="addBookBtn" class="btn btn-primary" 
+href="add-book.html">Add a book</a>
 </div>
+
+
+<!-- Bootstrap Javascript; at the end of the <body> -->
+<script 
+    src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js'
+    integrity='sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM'
+    crossorigin='anonymous'>
+  </script>
+<script>
+// Helper function to display error message
+function showError(message) {
+    // Hide the table and button in the event of error
+    $('#toursTable').hide();
+
+    // Display an error under the main container
+    $('#main-container')
+        .append("<label>"+message+"</label>");
+}
+
+
+// anonymous async function 
+// - using await requires the function that calls it to be async
+$(async() => {           
+    // Change serviceURL to your own
+    var serviceURL = "http://127.0.0.1:5002/tour";
+
+
+    try {
+        const response =
+          await fetch(
+            serviceURL, { method: 'GET' }
+        );
+        const result = await response.json();
+          if (response.status === 200) {
+            // success case
+            var books = result.data.books; //the array is in books within data of 
+                                            // the returned result
+            // for loop to setup all table rows with obtained book data
+            var rows = "";
+            for (const book of books) {
+                eachRow ="<td>" + tour.TID + "</td>" +
+                        "<td>" + tour.title + "</td>" +
+                        "<td>" + tour.description + "</td>" +
+                        "<td>" + tour.postcode + "</td>";
+                rows += "<tr>" + eachRow + "</tr>";
+            }
+                // add all the rows to the table
+                $('#toursTable').append(rows);
+            } else if (response.status == 404) {
+                // No books
+                showError(result.message);
+            } else {
+                // unexpected outcome, throw the error
+                throw response.status;
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            showError
+('There is a problem retrieving books data, please try again later.<br />' + error);
+        } // error
+});
+</script>
+    
+</body>
+</html>
