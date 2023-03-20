@@ -6,8 +6,8 @@ load_dotenv()
 import os, sys
 from invokes import invoke_http
 
-import amqp_setup
-import pika
+#import amqp_setup
+#import pika
 import json
 
 app = Flask(__name__)

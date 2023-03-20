@@ -17,6 +17,8 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3308/tourdb
       PYTHONUNBUFFERED: 1
+    env_file:
+      - .env
  
  
   ####################################
@@ -83,10 +85,12 @@ services:
     environment:
       # rabbit_host: rabbitmq
       # rabbit_port: 5672
-      booking_URL: http://booking:5001/booking
+      booking_URL: http://localhost:5001/booking
       PYTHONUNBUFFERED: 1
     ports:
       - "5101:5100"
+    env_file:
+      - .env
 
   ##################################
   # Tour: The Tour microservice
@@ -102,3 +106,5 @@ services:
       PYTHONUNBUFFERED: 1
     ports:
       - "5002:5002"
+    env_file:
+      - .env
