@@ -1,3 +1,4 @@
+import enquiryformViewVue from "@/views/EnquiryFormView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 
@@ -15,6 +16,18 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+  },
+  {
+    path: "/enquiry",
+    name: "enquiry",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/EnquiryFormView.vue"),
+  },
+  {
+    path: "/tourlisting",
+    name: "tourlisting",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/TourListingView.vue"),
   },
 ];
 
