@@ -19,10 +19,7 @@ now = datetime.now()
 load_dotenv()
 dbURL=os.getenv('dbURL')
 
-# Create a logger for the webhook function
-logger = logging.getLogger('webhook')
-# Create a logger for the create_payment function
-logger = logging.getLogger('create_payment')
+logger = logging.getLogger(__name__)
 
 
 app = Flask(__name__)
