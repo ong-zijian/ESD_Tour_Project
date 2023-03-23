@@ -3,6 +3,8 @@
 # to run this file as a python3 script
 
 import os
+#import logging for log
+import logging
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -18,6 +20,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("tourdbKey")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
+
+# Create a logger object
+logger = logging.getLogger(__name__)
 
 db = SQLAlchemy(app)
 
@@ -47,61 +52,78 @@ class Booking(db.Model):
 
 @app.route("/booking")
 def get_all():
-    bookinglist = Booking.query.all()
-    if len(bookinglist):
+    try:
+        bookinglist = Booking.query.all()
+        if len(bookinglist):
+            return jsonify(
+                {
+                    "code": 200,
+                    "data": {
+                        "bookings": [booking.json() for booking in bookinglist]
+                    }
+                }
+            )
         return jsonify(
             {
-                "code": 200,
-                "data": {
-                    "bookings": [booking.json() for booking in bookinglist]
-                }
+                "code": 404,
+                "message": "There are no booking."
             }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "There are no booking."
-        }
-    ), 404
+        ), 404
+    except Exception as e:
+        logger.exception("An error occurred while getting all bookings")
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while getting all bookings"
+            }
+        ), 500
+
 
 
 @app.route("/booking/<string:booking_id>")
 def find_by_booking_id(booking_id):
-    booking = Booking.query.filter_by(BID=booking_id).first()
-    if booking:
+    try:
+        booking = Booking.query.filter_by(BID=booking_id).first()
+        if booking:
+            return jsonify(
+                {
+                    "code": 200,
+                    "data": booking.json()
+                }
+            )
         return jsonify(
             {
-                "code": 200,
-                "data": booking.json()
+                "code": 404,
+                "data": {
+                    "booking_id": booking_id
+                },
+                "message": "Booking not found."
             }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "data": {
-                "booking_id": booking_id
-            },
-            "message": "Booking not found."
-        }
-    ), 404
+        ), 404
+    except Exception as e:
+        logger.exception(f"An error occurred while finding booking by id {booking_id}")
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred while finding booking by id"
+            }
+        ), 500
 
 
-@app.route("/booking", methods=['POST'])
 def create_booking():
     cName = request.json.get("cName", None)
     TourID = request.json.get("TID", None)
     startDateTime = request.json.get("startDateTime", None)
     Postcode = request.json.get("Postcode", None)
 
-
     booking = Booking(cName=cName, TID=TourID, startDateTime=startDateTime, Postcode=Postcode)
-
 
     try:
         with db.session.begin():
             db.session.add(booking)
             db.session.flush()
     except Exception as e:
+        logger.error("An error occurred while creating the order. " + str(e))
         return jsonify(
             {
                 "code": 500,
@@ -109,8 +131,7 @@ def create_booking():
             }
         ), 500
 
-    print(json.dumps(booking.json(), default=str))
-    print()
+    logger.info("Booking created: %s", booking.json())
 
     return jsonify(
         {
@@ -119,12 +140,12 @@ def create_booking():
         }
     ), 201
 
-
 @app.route("/booking/<string:booking_id>", methods=['PUT'])
 def update_booking(booking_id):
     try:
         booking = Booking.query.filter_by(BID=booking_id).first()
         if not booking:
+            logger.warning("Order not found. Booking ID: %s", booking_id)
             return jsonify(
                 {
                     "code": 404,
@@ -140,6 +161,7 @@ def update_booking(booking_id):
         if data['cName']:
             booking.cName = data['cName']
             db.session.commit()
+            logger.info("Booking updated. Booking ID: %s", booking_id)
             return jsonify(
                 {
                     "code": 200,
@@ -147,6 +169,7 @@ def update_booking(booking_id):
                 }
             ), 200
     except Exception as e:
+        logger.error("An error occurred while updating the order. Booking ID: %s Error: %s", booking_id, str(e))
         return jsonify(
             {
                 "code": 500,
