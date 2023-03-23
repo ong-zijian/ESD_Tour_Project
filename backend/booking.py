@@ -23,6 +23,8 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 # Create a logger object
 logger = logging.getLogger(__name__)
+#configure logger
+logging.basicConfig(level=logging.DEBUG, filename='app.log', format='%(asctime)s %(levelname)s %(message)s')
 
 db = SQLAlchemy(app)
 
@@ -132,7 +134,6 @@ def create_booking():
         ), 500
 
     logger.info("Booking created: %s", booking.json())
-
     return jsonify(
         {
             "code": 201,
