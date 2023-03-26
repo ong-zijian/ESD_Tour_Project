@@ -10,8 +10,8 @@ bot = telebot.TeleBot(os.getenv("telegramAPItoken"))
 # Define the standard answers
 answers = {
     'Hello': 'Hi there!',
-    'How are you?': 'I am doing well, thanks for asking.',
-    'What time is it?': 'Sorry, I am not able to tell time.'
+    'hello': 'Hi there!',
+    'How are you?': 'I am doing well, thanks for asking.'
 }
 
 # Define the message handler function
