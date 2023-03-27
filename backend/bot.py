@@ -14,6 +14,10 @@ answers = {
     'How are you?': 'I am doing well, thanks for asking.'
 }
 
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, "Hello, I'm a Telegram bot!")
+
 # Define the message handler function
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
