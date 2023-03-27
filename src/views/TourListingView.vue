@@ -10,7 +10,7 @@
                 <th>Title 13</th>
                 <th>Description</th>
                 <th>Postcode</th>
-                <a id="bookTourBtn" class="btn btn-primary" href="/booking">Book Now</a>
+                
             </tr>
         </thead>
       <tbody id="toursTable">
@@ -19,6 +19,7 @@
           <td>{{ tour.Title }}</td>
           <td>{{ tour.Description }}</td>
           <td>{{ tour.Postcode }}</td>
+          <a id="bookTourBtn" class="btn btn-primary" href="/booking">Book Now</a>
         </tr>
       </tbody>
     </table>
