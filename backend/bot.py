@@ -16,7 +16,7 @@ answers = {
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, "Hello, I'm a Telegram bot!")
+    bot.reply_to(message, "Hello, I'm the ESD Tour Bot! Enter your Booking ID to get your tour information")
 
 # Define the message handler function
 @bot.message_handler(func=lambda message: True)
