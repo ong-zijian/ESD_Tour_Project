@@ -25,48 +25,48 @@ services:
   # RabbitMQ: The messaging broker   
   ####################################
   
-  # rabbitmq:
-  #   image: rabbitmq:3-management
-  #   hostname: esd-rabbit
-  #   restart: always
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
-  #   volumes: 
-  #     - rabbitmq_data:/var/lib/rabbitmq
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: esd-rabbit
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes: 
+      - rabbitmq_data:/var/lib/rabbitmq
    
   #################################################
   # Activity Log: The Activity Log microservice
   #################################################
-  # activity_log:
-  #   build:
-  #     context: ./
-  #     dockerfile: activity_log.Dockerfile
-  #   image: ozjsmu/activity_log:esd
-  #   restart: always
-  #   depends_on:
-  #     - rabbitmq
-  #   environment:
-  #     rabbit_host: rabbitmq
-  #     rabbit_port: 5672
-  #     PYTHONUNBUFFERED: 1
+  activity_log:
+    build:
+      context: ./
+      dockerfile: activity_log.Dockerfile
+    image: ozjsmu/activity_log:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
 
   ###################################
   # Error: The Error microservice
   ###################################
 
-  # error:
-  #   build:
-  #     context: ./
-  #     dockerfile: error.Dockerfile
-  #   image: ozjsmu/error:esd
-  #   restart: always
-  #   depends_on:
-  #     - rabbitmq
-  #   environment:
-  #     rabbit_host: rabbitmq
-  #     rabbit_port: 5672
-  #     PYTHONUNBUFFERED: 1
+  error:
+    build:
+      context: ./
+      dockerfile: error.Dockerfile
+    image: ozjsmu/error:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
 
   ###############################################
   # Place booking: The Place Booking microservice
@@ -79,12 +79,12 @@ services:
     restart: always
     depends_on:
       - booking
-      # - activity_log
-      # - error
-      # - rabbitmq
+      - activity_log
+      - error
+      - rabbitmq
     environment:
-      # rabbit_host: rabbitmq
-      # rabbit_port: 5672
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
       booking_URL: http://localhost:5001/booking
       PYTHONUNBUFFERED: 1
     ports:
@@ -108,3 +108,6 @@ services:
       - "5002:5002"
     env_file:
       - .env
+
+
+#rebuild the containers using docker-compose up --build command.
