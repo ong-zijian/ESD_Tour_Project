@@ -1,5 +1,18 @@
+#import logging for log
+import logging
 import pika
 from os import environ ###
+
+#set up logging
+logging.basicConfig(
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    level=logging.INFO,
+    handlers=[
+        logging.FileHandler('rabbitmq.log'),
+        logging.StreamHandler()
+    ]
+)
+
 
 # These module-level variables are initialized whenever a new instance of python interpreter imports the module;
 # In each instance of python interpreter (i.e., a program run), the same module is only imported once (guaranteed by the interpreter).
@@ -68,6 +81,8 @@ def check_setup():
     if channel.is_closed:
         channel = connection.channel()
         channel.exchange_declare(exchange=exchangename, exchange_type=exchangetype, durable=True) ###
+        #log info
+        logging.info('RabbitMQ channel re-established.')
 
 
 def is_connection_open(connection):
@@ -81,4 +96,6 @@ def is_connection_open(connection):
     except pika.exceptions.AMQPError as e:
         print("AMQP Error:", e)
         print("...creating a new connection.")
+        #log info
+        logging.error(f"AMQP Error: {e}")
         return False
