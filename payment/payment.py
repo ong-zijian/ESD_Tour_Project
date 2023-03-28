@@ -33,6 +33,25 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
+
+@app.route('/log')
+def show_log():
+    # Read the logged messages from the logger object
+    log_messages = []
+    for handler in logging.getLogger().handlers:
+        if isinstance(handler, logging.FileHandler):
+            with open(handler.baseFilename, 'r') as log_file:
+                log_messages = log_file.readlines()
+
+    # Create an HTML table to display the logged messages
+    table_html = '<table><thead><tr><th>Time</th><th>Level</th><th>Message</th></tr></thead><tbody>'
+    for message in log_messages:
+        time, level, message = message.strip().split(' ', 2)
+        table_html += f'<tr><td>{time}</td><td>{level}</td><td>{message}</td></tr>'
+    table_html += '</tbody></table>'
+
+    return table_html
+
 class Booking(db.Model):
     __tablename__="bookings"
 
