@@ -5,7 +5,7 @@
 import os
 #import logging for log
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -22,13 +22,43 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 # Create a logger object
-logger = logging.getLogger(__name__)
-#configure logger
-logging.basicConfig(level=logging.DEBUG, filename='app.log', format='%(asctime)s %(levelname)s %(message)s')
+logger = logging.getLogger('my_logger')
+logger.setLevel(logging.DEBUG)
+
+# Create a handler to output log messages as JSON objects
+class JsonLogHandler(logging.Handler):
+    def emit(self, record):
+        message = {
+            'time': record.created,
+            'level': record.levelname,
+            'message': record.getMessage()
+        }
+        print(json.dumps(message))
+
+handler = JsonLogHandler()
+logger.addHandler(handler)
 
 db = SQLAlchemy(app)
 
 CORS(app)  
+
+@app.route('/log')
+def show_log():
+    # Read the logged messages from the logger object
+    log_messages = []
+    for handler in logging.getLogger().handlers:
+        if isinstance(handler, logging.FileHandler):
+            with open(handler.baseFilename, 'r') as log_file:
+                log_messages = log_file.readlines()
+
+    # Create an HTML table to display the logged messages
+    table_html = '<table><thead><tr><th>Time</th><th>Level</th><th>Message</th></tr></thead><tbody>'
+    for message in log_messages:
+        time, level, message = message.strip().split(' ', 2)
+        table_html += f'<tr><td>{time}</td><td>{level}</td><td>{message}</td></tr>'
+    table_html += '</tbody></table>'
+
+    return table_html
 
 # Create Class for the Booking
 class Booking(db.Model):
@@ -111,7 +141,7 @@ def find_by_booking_id(booking_id):
             }
         ), 500
 
-
+@app.route("/booking",methods=['POST'])
 def create_booking():
     cName = request.json.get("cName", None)
     TourID = request.json.get("TID", None)
