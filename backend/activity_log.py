@@ -24,6 +24,7 @@ def callback(channel, method, properties, body): # required signature for the ca
     processOrderLog(json.loads(body))
     print() # print a new line feed
 
+#from the place_booking.py call
 def processOrderLog(order):
     print("Recording an order log:")
     print(order)
