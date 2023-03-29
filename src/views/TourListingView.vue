@@ -1,7 +1,7 @@
 <template>
   <div id="main-container" class="container mb-4">
-    <h1 class="display-4">Tour Listing</h1>
-    <a id="filterBtn" class="btn btn-success">Filter</a>
+    <h1 class="display-4">Tour Listings</h1>
+    <!-- <a id="filterBtn" class="btn btn-success">Filter</a> -->
     <p> {{ getAllListing }}</p>
     <table class='table table-striped border-1'>
         <thead class='table-dark'>
@@ -19,11 +19,11 @@
           <td>{{ tour.Title }}</td>
           <td>{{ tour.Description }}</td>
           <td>{{ tour.Postcode }}</td>
-          <a id="bookTourBtn" class="btn btn-primary" href="/booking">Book Now</a>
+          <a id="bookTourBtn" class="btn btn-success" href="/booking">Book Now</a>
         </tr>
       </tbody>
     </table>
-    <a id="addBookBtn" class="btn btn-primary" href="add-book.html">Add a book</a>
+    <!-- <a id="addBookBtn" class="btn btn-primary" href="add-book.html">Add a book</a> -->
   </div>
 </template>
 
