@@ -3,6 +3,10 @@
 # to run this file as a python3 script
 
 import os
+#import pika for the log
+import pika
+#import logging for payment log
+import logging
 import traceback
 from dotenv import load_dotenv
 import stripe
@@ -12,8 +16,13 @@ from flask_cors import CORS
 from datetime import datetime
 now = datetime.now()
 
+
 load_dotenv()
 dbURL=os.getenv('dbURL')
+
+logger = logging.getLogger(__name__)
+#configure logger
+logging.basicConfig(level=logging.DEBUG, filename='app.log', format='%(asctime)s %(levelname)s %(message)s')
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
@@ -23,6 +32,25 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 db = SQLAlchemy(app)
 
 CORS(app)
+
+
+@app.route('/log')
+def show_log():
+    # Read the logged messages from the logger object
+    log_messages = []
+    for handler in logging.getLogger().handlers:
+        if isinstance(handler, logging.FileHandler):
+            with open(handler.baseFilename, 'r') as log_file:
+                log_messages = log_file.readlines()
+
+    # Create an HTML table to display the logged messages
+    table_html = '<table><thead><tr><th>Time</th><th>Level</th><th>Message</th></tr></thead><tbody>'
+    for message in log_messages:
+        time, level, message = message.strip().split(' ', 2)
+        table_html += f'<tr><td>{time}</td><td>{level}</td><td>{message}</td></tr>'
+    table_html += '</tbody></table>'
+
+    return table_html
 
 class Booking(db.Model):
     __tablename__="bookings"
@@ -100,11 +128,30 @@ def create_checkout_session():
             },
             ]
         )
+        # Activity log
+        message = f"Checkout session created successfully with session ID {checkout_session['id']}"
+        send_to_queue(message)
         return jsonify({"sessionId":checkout_session["id"]})
-    #activity log
+    
     except Exception as e:
-        #error log
+        # Error log
+        message = f"Failed to create checkout session: {str(e)}"
+        send_to_queue(message)
         return jsonify(error=str(e)),403
+    
+def send_to_queue(message):
+    # Connect to AMQP server
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    channel = connection.channel()
+
+    # Declare queue
+    channel.queue_declare(queue='logs')
+
+    # Send message to queue
+    channel.basic_publish(exchange='', routing_key='logs', body=message)
+
+    # Close connection
+    connection.close()
 
 @app.route("/success")
 def success():
@@ -125,39 +172,48 @@ def stripe_webhook():
         event=stripe.Webhook.construct_event(payload,sig_header,stripe_keys['endpoint_secret'])
 
     except ValueError as e:
+        #error log
+        logger.error(f'Invalid payload: {e}')
         return {
                 'code':400,
                 'message':'Invalid payload, sent for error handling'
                 }
-        #error log
+        
     except stripe.error.SignatureVerificationError as e:
+        #error log
+        logger.error(f'Invalid signature: {e}')
         return {
                 'code':400,
                 'message':'Invalid signature, sent for error handling'
                 }
-        #error log
+        
     
     if event['type']=='checkout.session.completed':
+        #activity log
+        logger.info('Payment successful')
         print ('Payment successful')
         create_payment()
-        #activity log
+
         
     return "Success", 200
 
 
 def create_payment():
+    logger.info('Creating payment')
     print('in creating payment function')
 
     payment = Payments(PdateTime=now,BID=1)
 
     try:
         print('Creating now...')
+        logger.info('Adding payment to database')
         db.session.add(payment)
         db.session.commit()
         print('Done creating')
-        #activity log
+        logger.info('Payment added successfully')
     except:
         #error log
+        logger.error('An error occurred while adding payment to the database', exc_info=True)
         print('error!!')
         print(traceback.format_exc())
         return jsonify(
