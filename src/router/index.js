@@ -31,10 +31,17 @@ const routes = [
   },
 
   {
-    path: "/orderForm/:TID/:startDateTime",
+    path: "/orderForm/:TID/:startDateTime/:Price",
     name: "orderForm",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/OrderForm.vue"),
+  },
+
+  {
+    path: "/paymentPlaceholder/",
+    name: "paymentPlaceholder",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/PaymentPlaceholder.vue"),
   },
 
 

@@ -1,6 +1,6 @@
 <template>
 <div class="container bg-light mt-4 mb-4 p-2">
-    <form action="action_page.php">
+    <form action="action_page.php" >
 
       <label class="form-label mt-4" for="name">Name</label>
       <input class="form-control" type="text" id="name" name="name" placeholder="Your name.." v-model="Name">
@@ -32,10 +32,10 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  //import axios from 'axios'
   import moment from 'moment';
 
-  const booking_url = "http://127.0.0.1:5101/place_booking"
+  const place_booking_url = "http://127.0.0.1:5101/place_booking"
   export default{
     props: {
       TID: {
@@ -45,17 +45,21 @@
       startDateTime: {
         type: String,
         required: true
+      },
+      Price: {
+        type: Number,
+        required: true
       }
     },
     data() {
       return {
         TID: Number(this.$route.params.TID),
-        //note: the startDateTime requires the datetime without the `gmt` at the end
+        Price: Number(this.$route.params.Price),
         startDateTime: this.$route.params.startDateTime,
         Name: this.Name,
         Email: this.Email,
         Country: this.Country,
-        Postcode: 123456
+      
 
       }; 
     },       
@@ -68,26 +72,92 @@
       },
       //process the place_booking
       placeBooking(){
-        //booking_url
-        const booking_data = {
-          "TID": this.TID,
-          "startDateTime": this.startDateTime,
-          "cName": this.Name,
-          'Postcode': this.Postcode 
-        };
-        axios.post(this.booking_url, booking_data)
-          .then(response => {
-            // handle successful response
-            console.log(response);
+        // const booking_data = {
+        //   "TID": this.TID,
+        //   "startDateTime": this.startDateTime,
+        //   "cName": this.Name,
+        //   'Postcode': this.Postcode 
+        // };
+        fetch(place_booking_url,
+        {
+          method: "POST",
+          headers: {
+              "Content-type": "application/json"
+          },
+          body: JSON.stringify(
+            {
+                "startDateTime": this.startDateTime,
+                "TID": this.TID,
+                "cName": this.Name,
+                "Email": this.Email,
+                "Price": this.Price
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            result = data.data;
+            console.log(result);
+            // 3 cases
+            switch (data.code) {
+              case 201:
+                // 201
+                this.bookingSuccessful = true;
+                const bid = result.order_result.data.booking_id;
+                const price = result.order_result.data.price;
+                //bookingMessage =`booking placed. booking Result: ${result.order_result.code}:${result.order_result.data.booking_id}`;
+                this.$router.push({ name: 'paymentPlaceholder' })
+                break;
+
+              case 400:
+                  // 400 
+                this.bookingSuccessful = true;
+                bookingMessage =
+                    `booking placed
+                    booking Result:
+                    ${result.booking_result.code}:${result.booking_result.data.status};
+
+                      Error handling:
+                      ${data.message}`;
+                break;
+            case 500:
+                // 500 
+                bookingMessage =
+                    `booking placed with error:
+                    booking Result:
+                    ${result.booking_result.code}:${result.booking_result.message}
+
+                    Error handling:
+                    ${data.message}`;
+                break;
+            default:
+                bookingMessage = `Unexpected error: ${data.code}`;
+                console.log(`Unknown error code : ${data.code}`);
+                break;
+
+              } // switch
+              console.log(orderMessage);
+              this.orderPlaced = true;
           })
           .catch(error => {
-            // handle error
-            console.log(error);
-          });
+              console.log("Problem in placing an order. " + error);
+          })
+        
+
+        // axios.post(booking_url, booking_data)
+        //   .then(response => {
+        //     // handle successful response
+        //     console.log(response);
+        //   })
+        //   .catch(error => {
+        //     // handle error
+        //     console.log(error);
+        //   });
 
 
-      }
-    } , 
+        }
+    },
+     
     // to be deleted if no need to debug
     mounted() {
       console.log('TID:', this.TID) // should output the TID parameter
