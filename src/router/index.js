@@ -1,5 +1,5 @@
 import enquiryformViewVue from "@/views/EnquiryFormView.vue";
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, VueRouter } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 
 const routes = [
@@ -29,6 +29,15 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/TourListingView.vue"),
   },
+
+  {
+    path: "/orderForm/:TID/:startDateTime",
+    name: "orderForm",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/OrderForm.vue"),
+  },
+
+
 ];
 
 const router = createRouter({
