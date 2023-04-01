@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required Meta Tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Document Title, Description, and Author -->
+  <title>Wave - Bootstrap 5 One Page Template</title>
+  <meta name="description" content="Wave is a Bootstrap 5 One Page Template.">
+  <meta name="author" content="BootstrapBrain">
+
+  <!-- Favicon and Touch Icons -->
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/favicon/favicon-512x512.png">
+
+  <!-- Google Fonts Files -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&family=Satisfy&display=swap" rel="stylesheet">
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="./assets/css/wave-bsb.css">
+
+    <!-- Vue 3 -->
+    <script src='https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.js'></script>
+    <!-- Vue 3: production version, optimized for size and speed -->
+    <!-- <script src='https://cdn.jsdelivr.net/npm/vue@3.0.2/dist/vue.global.prod.js'></script> -->
+
+</head>
+<body>
+ <!-- Navbar 1 - Bootstrap Brain Component -->
+ <nav class="navbar navbar-expand-md wave-bg-blue bsb-navbar bsb-navbar-hover bsb-navbar-caret">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">
+     <h1>Merlion Tours</h1> 
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+      
+    </button>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+      <div class="offcanvas-header">
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul id="bsb-tpl-navbar" class="navbar-nav justify-content-end flex-grow-1">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./aboutus.html" >About Us</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              For Tourists
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="tourlistings.html">Tour Listings</a>
+            </div>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                For Guides
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/public/jobportal.html">Job Portal</a>
+                <a class="dropdown-item" href="#">FAQ</a>
+              </div>
+              <li class="nav-item">
+                <a class="nav-link" href="enquiryform.html" >Enquire Us</a>
+              </li>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>   
+
+<div id="main-container" class="container">
+
+  <h1 class="display-4">Tour Listing</h1>
+  <a id="filterBtn" class="btn btn-success">Filter</a>
+  <table class='table table-striped border-1'>
+      <thead class='table-dark'>
+          <tr>
+              <th>TID</th>
+              <th>Title 13</th>
+              <th>Description</th>
+              <th>Postcode</th>
+          </tr>
+      </thead>
+    <tbody id=toursTable"></tbody>
+</table>
+  <a id="addBookBtn" class="btn btn-primary" 
+href="add-book.html">Add a book</a>
+</div>
+
+
+<!-- Bootstrap Javascript; at the end of the <body> -->
+<script 
+    src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js'
+    integrity='sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM'
+    crossorigin='anonymous'>
+  </script>
+<script>
+// Helper function to display error message
+function showError(message) {
+    // Hide the table and button in the event of error
+    $('#toursTable').hide();
+
+    // Display an error under the main container
+    $('#main-container')
+        .append("<label>"+message+"</label>");
+}
+
+
+// anonymous async function 
+// - using await requires the function that calls it to be async
+$(async() => {           
+    // Change serviceURL to your own
+    var serviceURL = "http://127.0.0.1:5002/tour";
+
+
+    try {
+        const response =
+          await fetch(
+            serviceURL, { method: 'GET' }
+        );
+        const result = await response.json();
+          if (response.status === 200) {
+            // success case
+            var books = result.data.books; //the array is in books within data of 
+                                            // the returned result
+            // for loop to setup all table rows with obtained book data
+            var rows = "";
+            for (const book of books) {
+                eachRow ="<td>" + tour.TID + "</td>" +
+                        "<td>" + tour.title + "</td>" +
+                        "<td>" + tour.description + "</td>" +
+                        "<td>" + tour.postcode + "</td>";
+                rows += "<tr>" + eachRow + "</tr>";
+            }
+                // add all the rows to the table
+                $('#toursTable').append(rows);
+            } else if (response.status == 404) {
+                // No books
+                showError(result.message);
+            } else {
+                // unexpected outcome, throw the error
+                throw response.status;
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            showError
+('There is a problem retrieving books data, please try again later.<br />' + error);
+        } // error
+});
+</script>
+    
+</body>
+</html>
