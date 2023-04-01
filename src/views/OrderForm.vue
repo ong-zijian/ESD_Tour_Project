@@ -2,59 +2,94 @@
 <div class="container bg-light mt-4 mb-4 p-2">
     <form action="action_page.php">
 
-      <label class="form-label mt-4" for="fname">First Name</label>
-      <input class="form-control" type="text" id="fname" name="firstname" placeholder="Your name..">
+      <label class="form-label mt-4" for="name">Name</label>
+      <input class="form-control" type="text" id="name" name="name" placeholder="Your name.." v-model="Name">
 
-      <label class="form-label mt-4" for="lname">Last Name</label>
-      <input class="form-control" type="text" id="lname" name="lastname" placeholder="Your last name..">
+      <label class="form-label mt-4" for="email">Email</label>
+      <input class="form-control" type="text" id="email" name="email" placeholder="Your email address.." v-model="Email">
 
       <label class="form-label mt-4" for="country">Country</label>
-      <select class="form-select" id="country" name="country">
+      <select class="form-select" id="country" name="country" v-model="Country">
         <option value="Singapore">Singapore</option>
         <option value="canada">Others</option>
       </select><br>
+      <!-- Remove if done troubleshooting
+      <p>Info: {{ TID }}, {{ startDateTime }},</p>
 
-     <button class="btn btn-primary mb-2" @click="retrieve" >Retrieve</button>
-     <p>Info: {{ TID }}, {{ startDateTime }}</p>
+      <button @click="test">test</button>
 
+      -->
+      <div>
 
-      <label class="form-label" for="subject"> I hereby consent that I will be punctual in the assembly of tour on and be kind to the tour guides.</label>
-      <input type="checkbox" id="vehicle2" name="consent" value="I consent"><br>
+      </div>
+      <label class="form-label" for="subject"> I hereby consent that I will be punctual in the assembly of tour on and be kind to the tour guides.</label><br/>
+      <input type="checkbox" id="vehicle2" name="consent" value="I consent" class="ml-2"><br>
 
-      <input class="btn btn-warning mt-4 mb-4" type="submit" value="Submit">
+      <input class="btn btn-warning mt-4 mb-4" type="submit" value="Submit" @click="placeBooking">
 
     </form>
   </div>
 </template>
 
 <script>
-    export default{
-      props: {
-        TID: {
-          type: String,
-          required: true
-        },
-        startDateTime: {
-          type: String,
-          required: true
-        }
+  import axios from 'axios'
+
+  //const booking_url = "http://127.0.0.1:5101/place_booking"
+  export default{
+    props: {
+      TID: {
+        type: Number,
+        required: true
       },
-      data() {
-        return {
-          tid: this.$route.params.tid,
-          startDateTime: this.$route.params.startDateTime
-        };
-      },  
-                
-      methods: {
-          
-          retrieve() {
-            alert(this.TID + ", " + this.startDateTime)
-          }
-      },
-      mounted() {
-        console.log('TID:', this.TID) // should output the TID parameter
-        console.log('startDateTime:', this.startDateTime) // should output the startDateTime parameter
+      startDateTime: {
+        type: String,
+        required: true
       }
+    },
+    data() {
+      return {
+        TID: Number(this.$route.params.TID),
+        //note: the startDateTime requires the datetime without the `gmt` at the end
+        startDateTime: this.$route.params.startDateTime,
+        Name: this.Name,
+        Email: this.Email,
+        Country: this.Country,
+        Postcode: 123456
+
+      }; 
+    },       
+    methods: {
+      // removes the " GMT" at the end of startDateTime for passing into the place_booking method
+      cleanGMT() {
+        this.startDateTime = this.startDateTime.replace(" GMT", "");
+      },
+      //process the place_booking
+      placeBooking(){
+        //booking_url
+        const booking_data = {
+          "TID": this.TID,
+          "startDateTime": this.startDateTime,
+          "cName": this.Name,
+          'Postcode': this.Postcode 
+        };
+        axios.post(this.booking_url, booking_data)
+          .then(response => {
+            // handle successful response
+            console.log(response);
+          })
+          .catch(error => {
+            // handle error
+            console.log(error);
+          });
+
+
+      }
+    } , 
+    // to be deleted if no need to debug
+    mounted() {
+      console.log('TID:', this.TID) // should output the TID parameter
+      this.cleanGMT()
+      console.log('startDateTime:', this.startDateTime) // should output the startDateTime parameter
+    }
   }
 </script>

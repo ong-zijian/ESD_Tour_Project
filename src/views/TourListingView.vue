@@ -20,8 +20,7 @@
           <td>{{ tour.Title }}</td>
           <td>{{ tour.Description }}</td>
           <td>{{ tour.Postcode }}</td>
-          <td> <button class="btn btn-primary mb-2" v-for="(value, key) in tour.details" :key="key" @click="onBook(tour.Tour_ID, value.startDateTime)">{{ value.startDateTime }}</button> </td>
-          <a id="bookTourBtn" class="btn btn-success" href="/booking">Book Now</a>
+          <td> <button class="btn btn-primary mb-2 " v-for="(value, key) in tour.details" :key="key" @click="onBook(tour.Tour_ID, value.startDateTime)">{{ value.startDateTime }}</button> </td>
         </tr>
       </tbody>
     </table>
