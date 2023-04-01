@@ -1,0 +1,21 @@
+{
+  "entries": {
+    "tap": {
+      "homebrew/bundle": {
+        "revision": "dbbb757e2257fe878418c1f0656b9e4cd3ce4762"
+      }
+    }
+  },
+  "system": {
+    "macos": {
+      "ventura": {
+        "HOMEBREW_VERSION": "4.0.10",
+        "HOMEBREW_PREFIX": "/opt/homebrew",
+        "Homebrew/homebrew-core": "api",
+        "CLT": "14.2.0.0.1.1668646533",
+        "Xcode": "14.1",
+        "macOS": "13.2.1"
+      }
+    }
+  }
+}

@@ -14,7 +14,7 @@ app = Flask(__name__)
 CORS(app)
 
 tour_URL = "http://localhost:5002/tour" 
-booking_URL = "http://localhost:5001/booking" 
+booking_URL = "http://booking:5001/booking" 
 activity_log_URL = "http://localhost:5003/activity_log"
 error_URL = "http://localhost:5004/error"
 
@@ -98,6 +98,12 @@ def processPlaceBooking(booking):
         #invoke_http(activity_log_URL, method="POST", json=order_result)            
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="booking.info", 
             body=message)
+        return {
+            "code": 201,
+            "data": {
+                "order_result": booking_result
+            }
+        }
     
     print("\nBooking published to RabbitMQ Exchange.\n")
     # - reply from the invocation is not used;
