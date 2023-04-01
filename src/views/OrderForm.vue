@@ -33,8 +33,9 @@
 
 <script>
   import axios from 'axios'
+  import moment from 'moment';
 
-  //const booking_url = "http://127.0.0.1:5101/place_booking"
+  const booking_url = "http://127.0.0.1:5101/place_booking"
   export default{
     props: {
       TID: {
@@ -61,7 +62,9 @@
     methods: {
       // removes the " GMT" at the end of startDateTime for passing into the place_booking method
       cleanGMT() {
-        this.startDateTime = this.startDateTime.replace(" GMT", "");
+        const format = "ddd, DD MMM YYYY HH:mm:ss";
+        const datetime = moment.utc(this.startDateTime, format).format("YYYY-MM-DDTHH:mm:ss");
+        this.startDateTime = datetime;
       },
       //process the place_booking
       placeBooking(){
