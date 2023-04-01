@@ -7,9 +7,10 @@
         <thead class='table-dark'>
             <tr>
                 <th>TID</th>
-                <th>Title 13</th>
+                <th>Tour Name</th>
                 <th>Description</th>
                 <th>Postcode</th>
+                <th>Time Slots</th>
                 
             </tr>
         </thead>
@@ -19,6 +20,7 @@
           <td>{{ tour.Title }}</td>
           <td>{{ tour.Description }}</td>
           <td>{{ tour.Postcode }}</td>
+          <td> <button class="btn btn-primary mb-2" v-for="(value, key) in tour.details" :key="key" @click="onBook(tour.Tour_ID, value.startDateTime)">{{ value.startDateTime }}</button> </td>
           <a id="bookTourBtn" class="btn btn-success" href="/booking">Book Now</a>
         </tr>
       </tbody>
@@ -28,6 +30,8 @@
 </template>
 
 <script>
+import { start } from '@popperjs/core';
+
   const url = "http://127.0.0.1:5002/tour"
   export default{
     name: "TourListingView",
@@ -50,6 +54,12 @@
           alert(error)
         });
       } 
+    },
+    methods: {
+      onBook(TID, startDateTime) {
+        console.log(TID, startDateTime)
+        this.$router.push({ name: 'orderForm', params: { TID, startDateTime } })
+      }
     }
   }
 </script>
