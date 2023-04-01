@@ -15,6 +15,7 @@
       </select><br>
 
      <button class="btn btn-primary mb-2" @click="retrieve" >Retrieve</button>
+     <p>Info: {{ TID }}, {{ startDateTime }}</p>
 
 
       <label class="form-label" for="subject"> I hereby consent that I will be punctual in the assembly of tour on and be kind to the tour guides.</label>
@@ -28,18 +29,32 @@
 
 <script>
     export default{
-//         props: {
-//             TID,
-//             startDateTime
-//   },
-        props: [TID, 
-                startDateTime],
-                
-        methods: {
-            
-            retrieve() {
-                console.log(TID, startDateTime)
-            }
+      props: {
+        TID: {
+          type: String,
+          required: true
+        },
+        startDateTime: {
+          type: String,
+          required: true
         }
-    }
+      },
+      data() {
+        return {
+          tid: this.$route.params.tid,
+          startDateTime: this.$route.params.startDateTime
+        };
+      },  
+                
+      methods: {
+          
+          retrieve() {
+            alert(this.TID + ", " + this.startDateTime)
+          }
+      },
+      mounted() {
+        console.log('TID:', this.TID) // should output the TID parameter
+        console.log('startDateTime:', this.startDateTime) // should output the startDateTime parameter
+      }
+  }
 </script>
