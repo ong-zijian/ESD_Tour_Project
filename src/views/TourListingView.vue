@@ -25,19 +25,22 @@
             <td>{{ tour.Guide }}</td>
             <td>{{ tour.Postcode }}</td>
             <td>{{ tour.Price }}</td>
-            <td> <button class="btn btn-primary mb-2 " v-for="(value, key) in tour.details" :key="key" @click="onBook(tour.Tour_ID, value.startDateTime, tour.Price)">{{ value.startDateTime }}</button> </td>
+            <td> <button class="btn btn-primary mb-2 " v-for="(value, key) in tour.details" 
+              :key="key" @click="onBook(tour.Tour_ID, value.startDateTime, tour.Price)" 
+              :disabled="value.disabled"
+              :id="'bookBtn-' + tour.Tour_ID + '-' + cleanGMT(value.startDateTime)">{{ value.startDateTime }}</button> </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <!-- <a id="addBookBtn" class="btn btn-primary" href="add-book.html">Add a book</a> -->
   </div>
 </template>
 
 <script>
 import { start } from '@popperjs/core';
+import moment from 'moment';
 
-  const url = "http://127.0.0.1:5002/tour"
+  const get_tour_url = "http://127.0.0.1:5002/tour";
   export default{
     name: "TourListingView",
     data() {
@@ -46,24 +49,50 @@ import { start } from '@popperjs/core';
       }
     },
     computed:{
-      getAllListing(){
-        const response = 
-        fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          console.log(response)
-          console.log(data.data.tour)
-          this.tours = data.data.tour      
-        })
-        .catch(error =>{
-          alert(error)
-        });
-      } 
+      getAllListing() {
+        fetch(get_tour_url)
+          .then(response => response.json())
+          .then(data => {
+            this.tours = data.data.tour;
+            this.tours.forEach(tour => {
+              tour.details.forEach(detail => {
+                const startDateTime = this.cleanGMT(detail.startDateTime);
+                this.isSlotAvailable(tour.Tour_ID, startDateTime)
+                  .then(isAvailable => {
+                    detail.disabled = !isAvailable;
+                  })
+                  .catch(error => {
+                    alert(error);
+                  });
+              });
+            });
+          })
+          .catch(error => {
+            alert(error);
+          });
+      }
     },
     methods: {
+      cleanGMT(startDateTime) {
+        const format = "ddd, DD MMM YYYY HH:mm:ss";
+        const datetime = moment.utc(startDateTime, format).format("YYYY-MM-DDTHH:mm:ss");
+        return datetime
+      },
       onBook(TID, startDateTime, Price) {
-        console.log(TID, startDateTime, Price)
+        //console.log(TID, startDateTime, Price)
         this.$router.push({ name: 'orderForm', params: { TID, startDateTime, Price } })
+      },
+      isSlotAvailable(TID, startDateTime) {
+        return fetch(`${get_tour_url}/${TID}/${startDateTime}`)
+          .then(response => {
+            if (response.status === 200) {
+              return response.json().then(data => {
+                return data.code === 200;
+              });
+            } else {
+              throw new Error(`Failed to fetch availability: ${response.status}`);
+            }
+          });
       }
     }
   }

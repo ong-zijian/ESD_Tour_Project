@@ -1,6 +1,9 @@
-# esd_project_template
+### esd_project_template
 
-## Project setup
+### First, run the following statements in your
+### terminal to install the following python packages
+
+### Project setup
 ```
 npm install
 ```
@@ -23,7 +26,7 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### Encodes the Date and Time from 
+### Encodes DateTimes into a numeric format
 ```
 npm install moment from 'moment'
 ```
