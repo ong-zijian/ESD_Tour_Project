@@ -43,6 +43,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/PaymentPlaceholder.vue"),
   },
+  {
+    path: "/bot",
+    name: "bot",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/bot.vue"),
+  },
 
 
 ];

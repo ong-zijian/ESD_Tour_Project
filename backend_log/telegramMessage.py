@@ -19,6 +19,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 db = SQLAlchemy(app)
 CORS(app) 
 
+    
 # Create Class for the Tour
 class Tour(db.Model):
     __tablename__ = 'tours'
@@ -27,34 +28,38 @@ class Tour(db.Model):
     Title = db.Column(db.String(64), nullable=False)
     Description = db.Column(db.String(1000), nullable=False)
     Postcode = db.Column(db.String(6), nullable=False)
+    Price = db.Column(db.Float, nullable=False)
 
     def json(self):
         dto = {
             'Tour_ID': self.TID,
             'Title':self.Title,
             'Description': self.Description,
-            'Postcode': self.Postcode
+            'Postcode': self.Postcode,
+            "Price": self.Price
         }
-
         return dto
 
 
+# Create Class for the Booking
 class Booking(db.Model):
     __tablename__ = 'bookings'
 
     BID = db.Column(db.Integer, autoincrement=True, primary_key=True)
     startDateTime = db.Column(db.DateTime(timezone=True), primary_key=True)
-    TID = db.Column(db.Integer, nullable=False)
+    TID = db.Column(db.ForeignKey('tours.TID', ondelete='CASCADE'),primary_key=True)
     cName = db.Column(db.String(256), nullable=False)
-    Postcode = db.Column(db.String(6), nullable=False)
+    Email = db.Column(db.String(256), nullable=False)
+    Price = db.Column(db.Float, nullable=False)
 
     def json(self):
         dto = {
             'booking_id': self.BID,
-            'startDateTime': str(self.startDateTime),
+            'startDateTime': self.startDateTime,
             'Tour_ID': self.TID,
             'cName': self.cName,
-            'Postcode': self.Postcode
+            'Email': self.Email,
+            "Price": self.Price
         }
         return dto
     
@@ -78,6 +83,7 @@ def find_by_booking_id(booking_id):
     booking = Booking.query.filter_by(BID=booking_id).first()
     if booking:
         booking1 = booking.json()
+        booking1['startDateTime'] = booking1['startDateTime'].strftime('%Y-%m-%d %H:%M:%S')
         return json.dumps(booking1)
     return jsonify(
         {
@@ -100,6 +106,7 @@ def receive_chat_id():
     response = requests.get(f'http://127.0.0.1:5010/booking/{bid}')
     if response.status_code == 200:
         data2 = json.loads(response.content)
+        print(data2)
         # Split the datetime into date and time
         datetime1 = data2["startDateTime"]
         datetime1 = datetime1.split(" ")
@@ -108,7 +115,7 @@ def receive_chat_id():
         tour = requests.get(f'http://127.0.0.1:5010/tour/{data2["Tour_ID"]}')
         if tour.status_code == 200:
             tourDetails = json.loads(tour.content)
-            string = f'Dear {data2["cName"]}, \n\nYour booking of ID {data2["Tour_ID"]} is confirmed. Here are the details: \n- Title: {tourDetails["Title"]}\n- Description: {tourDetails["Description"]}\n- Date: {datetime1[0]} \n- Time: {datetime1[1]} \n- Location: {data2["Postcode"]} \n\nEnjoy your tour!'
+            string = f'Dear {data2["cName"]}, \n\nYour booking of ID {data2["Tour_ID"]} is confirmed. Here are the details: \n- Title: {tourDetails["Title"]}\n- Description: {tourDetails["Description"]}\n- Date: {datetime1[0]} \n- Time: {datetime1[1]} \n- Location: {tourDetails["Postcode"]} \n\nEnjoy your tour!'
             send_message(string, chat_id)
     else:
         send_message(f"Booking with ID {bid} not found.", chat_id)
