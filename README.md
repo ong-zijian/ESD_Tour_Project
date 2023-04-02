@@ -22,3 +22,8 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Encodes the Date and Time from 
+```
+npm install moment from 'moment'
+```

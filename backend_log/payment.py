@@ -95,7 +95,6 @@ def create_checkout_session():
     domain_url="http://localhost:5200/"
     stripe.api_key=stripe_keys["secret_key"]
     # Assigned the Stripe secret key to stripe.api_key (so it will be sent automatically when we make a request to create a new Checkout Session)
-
     try:
         checkout_session = stripe.checkout.Session.create(
             success_url=domain_url+"success?session_id{CHECKOUT_SESSION_ID}",
@@ -104,7 +103,7 @@ def create_checkout_session():
             mode="payment",
             line_items=[
             {
-                "price":'price_1MluLTA7CL0wKMv1WzcFON50',
+                "price":"price_1MsUwqA7CL0wKMv1qIbmA16r",
                 "quantity":1
             },
             ]
@@ -167,7 +166,6 @@ def stripe_webhook():
 
 def create_payment():
     print('in creating payment function')
-
     payment = Payments(PdateTime=now,BID=1)
 
     try:

@@ -70,7 +70,7 @@ import moment from 'moment';
           .catch(error => {
             alert(error);
           });
-      }
+      },
     },
     methods: {
       cleanGMT(startDateTime) {
