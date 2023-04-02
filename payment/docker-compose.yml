@@ -1,0 +1,73 @@
+version: "3.8"
+
+volumes:
+  rabbitmq_data:
+
+services:
+ 
+  ###################################
+  # Payment: The Payment microservice
+  ###################################
+  payment:
+    build:
+      context: ./
+      dockerfile: payment.Dockerfile
+    image: karthigamagesh17/payment:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/tourdb
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5200:5200"
+    env_file:
+      - .env
+    
+ 
+ 
+  ####################################
+  # RabbitMQ: The messaging broker   
+  ####################################
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: ESD_tours
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes: 
+      - rabbitmq_data:/var/lib/rabbitmq
+   
+  #################################################
+  # Activity Log: The Activity Log microservice
+  #################################################
+  activity_log:
+    build:
+      context: ./
+      dockerfile: activity_log.Dockerfile
+    image: karthigamagesh17/activity_log:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
+  ###################################
+  # Error: The Error microservice
+  ###################################
+
+  error:
+    build:
+      context: ./
+      dockerfile: error.Dockerfile
+    image: karthigamagesh17/error:esd
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
