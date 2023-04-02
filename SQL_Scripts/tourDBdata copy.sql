@@ -13,6 +13,7 @@ Title varchar(64) NOT NULL,
 Description varchar(1000) NOT NULL,
 Postcode char(6) NOT NULL,
 Price FLOAT NOT NULL,
+Guide varchar(64) NOT NULL,
 PRIMARY KEY (TID)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
@@ -56,7 +57,7 @@ PRIMARY KEY (PID),
 FOREIGN KEY (BID) REFERENCES bookings(BID)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-INSERT INTO tours (Title, Description, Postcode, Price) VALUES ("Test tour 1", "Test tour 1 description", "123456", 14.50);
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Test tour 1", "Test tour 1 description", "123456", 14.50, "Alan");
 INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-03-08 10:00:00", "2023-03-08 12:00:00", 1, 10, 0);
 INSERT INTO bookings (startDateTime, TID, cName, Email, Price) VALUES ("2023-03-08 10:00:00", 1,  "John", "123@abc.com", 14.50);
 INSERT INTO payments (PdateTime, BID) VALUES ("2023-03-01 10:00:00", 1);

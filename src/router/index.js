@@ -38,7 +38,7 @@ const routes = [
   },
 
   {
-    path: "/paymentPlaceholder/",
+    path: "/paymentPlaceholder/:BID/:Price",
     name: "paymentPlaceholder",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/PaymentPlaceholder.vue"),

@@ -37,6 +37,7 @@ class Tour(db.Model):
     Description = db.Column(db.String(1000), nullable=False)
     Postcode = db.Column(db.String(6), nullable=False)
     Price = db.Column(db.Float, nullable=False)
+    Guide = db.Column(db.String(64), nullable=False)
 
     def json(self):
         dto = {
@@ -44,7 +45,8 @@ class Tour(db.Model):
             'Title':self.Title,
             'Description': self.Description,
             'Postcode': self.Postcode,
-            "Price": self.Price
+            "Price": self.Price,
+            "Guide": self.Guide
         }
         dto['details'] = []
         for detail in self.idv_tours:

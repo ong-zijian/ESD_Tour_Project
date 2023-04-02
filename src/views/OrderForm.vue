@@ -1,6 +1,6 @@
 <template>
 <div class="container bg-light mt-4 mb-4 p-2">
-    <form action="action_page.php" >
+    <form>
 
       <label class="form-label mt-4" for="name">Name</label>
       <input class="form-control" type="text" id="name" name="name" placeholder="Your name.." v-model="Name">
@@ -13,12 +13,6 @@
         <option value="Singapore">Singapore</option>
         <option value="canada">Others</option>
       </select><br>
-      <!-- Remove if done troubleshooting
-      <p>Info: {{ TID }}, {{ startDateTime }},</p>
-
-      <button @click="test">test</button>
-
-      -->
       <div>
 
       </div>
@@ -59,7 +53,7 @@
         Name: this.Name,
         Email: this.Email,
         Country: this.Country,
-      
+        bookingSuccessful: false,
 
       }; 
     },       
@@ -71,13 +65,8 @@
         this.startDateTime = datetime;
       },
       //process the place_booking
-      placeBooking(){
-        // const booking_data = {
-        //   "TID": this.TID,
-        //   "startDateTime": this.startDateTime,
-        //   "cName": this.Name,
-        //   'Postcode': this.Postcode 
-        // };
+      placeBooking(event){
+        event.preventDefault();
         fetch(place_booking_url,
         {
           method: "POST",
@@ -96,43 +85,38 @@
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            result = data.data;
-            console.log(result);
+            let result = data.data;
+            let orderMessage;
+            console.log(result.order_result.data.Price);
             // 3 cases
             switch (data.code) {
               case 201:
                 // 201
                 this.bookingSuccessful = true;
-                const bid = result.order_result.data.booking_id;
-                const price = result.order_result.data.price;
-                //bookingMessage =`booking placed. booking Result: ${result.order_result.code}:${result.order_result.data.booking_id}`;
-                this.$router.push({ name: 'paymentPlaceholder' })
+                const BID = result.order_result.data.booking_id;
+                const Price = result.order_result.data.Price;
+                console.log(this.bookingSuccessful)
+                orderMessage = `Response code:${result.order_result.code}`;
+                this.$router.push({ name: 'paymentPlaceholder' , params: { BID, Price } })
                 break;
 
               case 400:
                   // 400 
                 this.bookingSuccessful = true;
-                bookingMessage =
-                    `booking placed
-                    booking Result:
-                    ${result.booking_result.code}:${result.booking_result.data.status};
-
-                      Error handling:
-                      ${data.message}`;
+                orderMessage =`Code: ${result.order_result.code}, Error handling: ${data.message}`;
+                alert("Please enter the valid field")
                 break;
             case 500:
                 // 500 
-                bookingMessage =
-                    `booking placed with error:
-                    booking Result:
-                    ${result.booking_result.code}:${result.booking_result.message}
-
-                    Error handling:
-                    ${data.message}`;
+                orderMessage = `Code: ${result.order_result.code}:${result.order_result.message};
+                                Error handling: ${data.message}`;
+                alert("Please try again")
                 break;
+
             default:
-                bookingMessage = `Unexpected error: ${data.code}`;
+                orderMessage = `Unexpected error: ${data.code}`;
                 console.log(`Unknown error code : ${data.code}`);
+                alert("Please try again")
                 break;
 
               } // switch
@@ -141,6 +125,7 @@
           })
           .catch(error => {
               console.log("Problem in placing an order. " + error);
+              alert("Please key in the fields and try again")
           })
         
 
