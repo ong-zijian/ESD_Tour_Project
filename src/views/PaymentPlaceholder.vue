@@ -1,26 +1,19 @@
 <template>
-    <div>
-        <h2>Placeholder for working with payments</h2>
+    <div class="container m-10 text-center">
+        <h2>Hay Dairies Farm Tour</h2>
+        <button class="btn btn-info" id="submit" name="submit" @click="redirectToCheckout">Purchase!</button>
     </div>
+
 </template>
 <script>
-    export default{
-        props: {
-            BID: {
-                type: Number,
-                required: true
-            },
-            Price: {
-                type: Number,
-                required: true
-            }
-        },
-        data() {
-            return {
-                BID: Number(this.$route.params.BID),
-                Price: Number(this.$route.params.Price),          
+    import axios from "axios";
 
-            }; 
-        },     
+    export default {
+    name: "MyComponent",
+        methods: {
+            redirectToCheckout() {
+                window.location.href = 'http://127.0.0.1:5200';
+        }
     }
+    };
 </script>
