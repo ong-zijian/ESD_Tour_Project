@@ -29,7 +29,9 @@
   //import axios from 'axios'
   import moment from 'moment';
 
-  const place_booking_url = "http://127.0.0.1:5101/place_booking"
+  const place_booking_url = "http://127.0.0.1:5101/place_booking";
+  let increment_tour_url = "http://127.0.0.1:5002/tour";
+
   export default{
     props: {
       TID: {
@@ -97,6 +99,8 @@
                 const Price = result.order_result.data.Price;
                 console.log(this.bookingSuccessful)
                 orderMessage = `Response code:${result.order_result.code}`;
+                this.increment()
+                //send to next page
                 this.$router.push({ name: 'paymentPlaceholder' , params: { BID, Price } })
                 break;
 
@@ -127,20 +131,27 @@
               console.log("Problem in placing an order. " + error);
               alert("Please key in the fields and try again")
           })
-        
 
-        // axios.post(booking_url, booking_data)
-        //   .then(response => {
-        //     // handle successful response
-        //     console.log(response);
-        //   })
-        //   .catch(error => {
-        //     // handle error
-        //     console.log(error);
-        //   });
-
-
-        }
+      },
+      increment(){
+        //insert put to increment_tour_url
+        console.log("incrementing")
+        increment_tour_url = increment_tour_url + "/"+ this.TID +  "/" + this.startDateTime
+        fetch(increment_tour_url, {
+          method: "PUT",
+          headers: {
+            "Content-type": "application/json"
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Tour increment success:", data);
+        })
+        .catch(error => {
+          console.error("Problem incrementing tour count:", error);
+        });
+        // end of insert
+      }
     },
      
     // to be deleted if no need to debug
