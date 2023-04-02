@@ -24,10 +24,14 @@ dbURL=os.getenv('dbURL')
 # configure logger
 # logging.basicConfig(level=logging.DEBUG, filename='app.log', format='%(asctime)s %(levelname)s %(message)s')
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder='payment/templates',static_folder='payment/static')
+app.template_folder = 'templates'
+app.static_folder='static'
+
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
+app.config['EXPLAIN_TEMPLATE_LOADING'] = True
 
 db = SQLAlchemy(app)
 
@@ -111,7 +115,7 @@ def get_publishable_key():
 
 @app.route("/checkout-session")
 def create_checkout_session():
-    domain_url="http://127.0.0.1:5200/"
+    domain_url="http://localhost:5200/"
     stripe.api_key=stripe_keys["secret_key"]
     # Assigned the Stripe secret key to stripe.api_key (so it will be sent automatically when we make a request to create a new Checkout Session)
 
@@ -130,28 +134,28 @@ def create_checkout_session():
         )
         # Activity log
         message = f"Checkout session created successfully with session ID {checkout_session['id']}"
-        send_to_queue(message)
+        # send_to_queue(message)
         return jsonify({"sessionId":checkout_session["id"]})
     
     except Exception as e:
         # Error log
         message = f"Failed to create checkout session: {str(e)}"
-        send_to_queue(message)
+        # send_to_queue(message)
         return jsonify(error=str(e)),403
     
-def send_to_queue(message):
-    # Connect to AMQP server
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-    channel = connection.channel()
+# def send_to_queue(message):
+#     # Connect to AMQP server
+#     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+#     channel = connection.channel()
 
-    # Declare queue
-    channel.queue_declare(queue='logs')
+#     # Declare queue
+#     channel.queue_declare(queue='logs')
 
-    # Send message to queue
-    channel.basic_publish(exchange='', routing_key='logs', body=message)
+#     # Send message to queue
+#     channel.basic_publish(exchange='', routing_key='logs', body=message)
 
-    # Close connection
-    connection.close()
+#     # Close connection
+#     connection.close()
 
 @app.route("/success")
 def success():
@@ -235,5 +239,6 @@ def create_payment():
 
 
 
-if __name__ == "__main__":
-    app.run(port=5200,debug=True)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5200, debug=True)
+app.jinja_loader.searchpath = ['./payment/templates']
