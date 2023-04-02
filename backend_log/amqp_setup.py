@@ -3,15 +3,6 @@ import logging
 import pika
 from os import environ ###
 
-#set up logging
-# logging.basicConfig(
-#     format='%(asctime)s [%(levelname)s] %(message)s',
-#     level=logging.INFO,
-#     handlers=[
-#         logging.FileHandler('rabbitmq.log'),
-#         logging.StreamHandler()
-#     ]
-# )
 
 
 # These module-level variables are initialized whenever a new instance of python interpreter imports the module;
