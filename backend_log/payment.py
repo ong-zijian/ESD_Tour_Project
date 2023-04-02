@@ -24,7 +24,7 @@ dbURL=os.getenv('dbURL')
 app = Flask(__name__)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = dbURL
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("tourdbKey")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
