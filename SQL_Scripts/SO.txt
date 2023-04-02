@@ -1,5 +1,0 @@
-https://stackoverflow.com/questions/1475665/why-git-push-helloworld-mastermaster-instead-of-just-git-push-helloworld
-https://stackoverflow.com/questions/3293531/how-to-permanently-remove-few-commits-from-remote-branch
-https://appuals.com/how-to-undo-the-init-command-on-git/
-https://stackoverflow.com/questions/1213430/how-to-fully-delete-a-git-repository-created-with-init
-https://stackoverflow.com/questions/5181845/git-push-existing-repo-to-a-new-and-different-remote-repo-server

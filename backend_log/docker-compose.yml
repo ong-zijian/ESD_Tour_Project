@@ -18,10 +18,10 @@ services:
     build:
       context: ./
       dockerfile: booking.Dockerfile
-    image: karthigamagesh17/booking:esd
+    image: smuozj/booking:esd
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/tourdb
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3308/tourdb
       PYTHONUNBUFFERED: 1
     ports:
       - "5001:5001"
@@ -35,10 +35,10 @@ services:
     build:
       context: ./
       dockerfile: payment.Dockerfile
-    image: karthigamagesh17/payment:esd
+    image: smuozj/payment:esd
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/tourdb
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3308/tourdb
       PYTHONUNBUFFERED: 1
     ports:
       - "5200:5200"
@@ -66,7 +66,7 @@ services:
     build:
       context: ./
       dockerfile: activity_log.Dockerfile
-    image: karthigamagesh17/activity_log:esd
+    image: smuozj/activity_log:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -83,7 +83,7 @@ services:
     build:
       context: ./
       dockerfile: error.Dockerfile
-    image: karthigamagesh17/error:esd
+    image: smuozj/error:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -99,7 +99,7 @@ services:
     build:
       context: ./
       dockerfile: place_booking.Dockerfile
-    image: karthigamagesh17/place_booking:esd
+    image: smuozj/place_booking:esd
     restart: always
     depends_on:
       - booking
@@ -123,10 +123,10 @@ services:
     build:
       context: ./
       dockerfile: tour.Dockerfile
-    image: karthigamagesh17/tour:esd
+    image: smuozj/tour:esd
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/tourdb
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3308/tourdb
       PYTHONUNBUFFERED: 1
     ports:
       - "5002:5002"

@@ -95,13 +95,14 @@
               case 201:
                 // 201
                 this.bookingSuccessful = true;
-                const BID = result.order_result.data.booking_id;
-                const Price = result.order_result.data.Price;
+                let BID = result.order_result.data.booking_id;
+                let Price = result.order_result.data.Price;
                 console.log(this.bookingSuccessful)
                 orderMessage = `Response code:${result.order_result.code}`;
                 this.increment()
                 //send to next page
-                this.$router.push({ name: 'paymentPlaceholder' , params: { BID, Price } })
+                console.log(BID)
+                this.$router.push({ name: 'paymentPlaceholder' , params: { BID:BID, Price:Price } })
                 break;
 
               case 400:
