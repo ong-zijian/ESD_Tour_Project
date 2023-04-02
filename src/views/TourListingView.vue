@@ -40,7 +40,7 @@
 import { start } from '@popperjs/core';
 import moment from 'moment';
 
-  const get_tour_url = "http://127.0.0.1:5002/tour";
+  const get_tour_url = "http://localhost:8000/api/v1/tour";
   export default{
     name: "TourListingView",
     data() {

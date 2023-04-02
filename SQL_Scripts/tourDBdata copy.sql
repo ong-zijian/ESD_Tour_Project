@@ -57,10 +57,60 @@ PRIMARY KEY (PID),
 FOREIGN KEY (BID) REFERENCES bookings(BID)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Test tour 1", "Test tour 1 description", "123456", 14.50, "Alan");
-INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-03-08 10:00:00", "2023-03-08 12:00:00", 1, 10, 0);
-INSERT INTO bookings (startDateTime, TID, cName, Email, Price) VALUES ("2023-03-08 10:00:00", 1,  "John", "123@abc.com", 14.50);
-INSERT INTO payments (PdateTime, BID) VALUES ("2023-03-01 10:00:00", 1);
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Hay Dairies Farm Tour", "A day tour at Hay Dairies Goat Farm to experience goat feeding and stand a chance to purchase exclusive souvenirs", "718859", 15, "Alan Khoo");
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-28 12:00:00", "2023-05-28 14:00:00", 11, 15, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-29 14:00:00", "2023-05-29 16:00:00", 11, 15, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-01 10:00:00", "2023-06-01 12:00:00", 11, 15, 15);
+
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Fort Canning Spice Garden Tour", "A replica of the original 19-hectare garden that Sir Stamford Raffles built on Fort Canning Hill in 1822, embodying the spices used in local dishes", "179037", 12, "Danny Tan");
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-30 10:00:00", "2023-05-30 12:00:00", 12, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-02 10:00:00", "2023-06-02 12:00:00", 12, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-03 10:00:00", "2023-06-03 12:00:00", 12, 10, 0);
+
+
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Hawker Centre Tour", "Singapore is famous for its delicious street food, and this tour takes you to some of the best hawker centres, where you can taste local delicacies such as Hainanese chicken rice, laksa, and satay.", "641221", 14, "Wilber Goh");
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-28 14:00:00", "2023-05-28 17:00:00", 13, 8, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-29 15:00:00", "2023-05-29 18:00:00", 13, 8, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-01 14:30:00", "2023-06-01 17:30:00", 13, 8, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-03 15:00:00", "2023-06-03 18:00:00", 13, 8, 0);
+
+
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Chinatown Walking Tour ", "This tour takes you through the narrow streets of Chinatown, where you can explore traditional Chinese shophouses, temples, and try some local snacks.", "058943", 18, "Monica Cheng");
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-28 12:00:00", "2023-05-28 15:00:00", 14, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-02 15:00:00", "2023-06-02 18:00:00", 14, 10, 0);
+
+
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Little India Walking Tour", "Little India is a vibrant ethnic district in Singapore, and this tour takes you through its colourful streets, where you can see the beautiful Sri Veeramakaliamman Temple, Mustafa Centre, and try some Indian cuisine.", "217986", 14, "Yuki Teo");
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-28 11:00:00", "2023-05-28 14:00:00", 15, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-29 13:00:00", "2023-05-29 16:00:00", 15, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-01 11:00:00", "2023-06-01 14:00:00", 15, 10, 0);
+
+
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Bicycle Tour", "Explore Singapore's hidden gems by bike on this tour, which takes you through off-the-beaten-path neighbourhoods, parks, and nature reserves.", "018956", 12, "Sophie Wong");
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-28 12:00:00", "2023-05-28 16:00:00", 16, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-29 12:00:00", "2023-05-29 16:00:00", 16, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-03 12:00:00", "2023-06-03 16:00:00", 16, 10, 0);
+
+
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Sentosa Island Tour", "Sentosa Island is a popular tourist destination in Singapore, and this tour takes you through the island's attractions, such as Universal Studios, S.E.A. Aquarium, and Adventure Cove", "099008", 25, "James Toh");
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-28 11:00:00", "2023-05-28 15:00:00", 17, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-02 11:00:00", "2023-06-02 15:00:00", 17, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-03 11:00:00", "2023-06-03 15:00:00", 17, 10, 0);
+
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Peranakan Trail Tour", "The Peranakan culture is a unique blend of Chinese, Malay, and Indonesian influences, and this tour takes you to the Peranakan Museum, Katong district, and other places where you can learn more about this fascinating culture.", "179941", 15, "Mohd Shahid Tan");
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-28 11:00:00", "2023-05-28 14:00:00", 18, 12, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-29 13:00:00", "2023-05-29 16:00:00", 18, 12, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-02 11:00:00", "2023-06-02 14:00:00", 18, 12, 0);
+
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Singapore Art Tour", "Singapore has a thriving arts scene, and this tour takes you to some of the city's best art galleries and museums, such as the National Gallery Singapore, ArtScience Museum, and the Singapore Art Museum. You'll get to see contemporary and traditional art from Singapore and around the world.", "018974", 25, "Nur Dina");
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-28 11:00:00", "2023-05-28 14:00:00", 19, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-29 13:00:00", "2023-05-29 16:00:00", 19, 10, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-02 11:00:00", "2023-06-02 14:00:00", 19, 10, 0);
+
+INSERT INTO tours (Title, Description, Postcode, Price, Guide) VALUES ("Singapore Zoo Breakfast with Orangutans Tour", "This tour takes you to the Singapore Zoo for a unique breakfast experience with the orangutans. You'll enjoy a buffet breakfast in the company of these majestic creatures and learn more about their habitat and conservation efforts", "0940595", 35, "Wilson Boo");
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-28 11:00:00", "2023-05-28 13:00:00", 20, 12, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-05-29 11:00:00", "2023-05-29 13:00:00", 20, 12, 0);
+INSERT INTO idv_tours (startDateTime, endDateTime, TID, TotalSlot, TakenSlot) VALUES ("2023-06-02 11:00:00", "2023-06-02 13:00:00", 20, 12, 0);
 
 
 COMMIT;
