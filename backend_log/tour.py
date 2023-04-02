@@ -185,16 +185,16 @@ def update_tour(TID, startDateTime):
                         "TakenSlot": tour.TakenSlot,
                         "Message": "The slot is full"
                     }
-                )
-        return jsonify(
-            {
-                "code": 404,
-                "data": {
-                    "Takenslot": tour.TakenSlot
-                },
-                "message": "Tour not found."
-            }
-        ), 404
+                ), 404
+        # return jsonify(
+        #     {
+        #         "code": 404,
+        #         "data": {
+        #             "Takenslot": tour.TakenSlot
+        #         },
+        #         "message": "Tour not found."
+        #     }
+        # ), 404
     except ValueError as e:
         app.logger.error(f"Failed to decode JSON object: {e}")
         return jsonify(
@@ -218,12 +218,13 @@ def validate_tour_slot(TID, startDateTime):
                         "message": "This tour is full"
                     }
                 )
-        return jsonify(
-            {
-                "code": 200,
-                "message": "Tour can still be filled"
-            }
-        ), 404
+            else:
+                return jsonify(
+                    {
+                        "code": 200,
+                        "message": "Tour can still be filled"
+                    }
+                ), 200
     except ValueError as e:
         app.logger.error(f"Failed to decode JSON object: {e}")
         return jsonify(
