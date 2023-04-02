@@ -2,6 +2,12 @@ version: "3.8"
 
 volumes:
   rabbitmq_data:
+  pgdata: 
+  kongadata:
+
+networks:
+  kong-net:
+    driver: bridge
 
 services:
  
@@ -12,10 +18,10 @@ services:
     build:
       context: ./
       dockerfile: booking.Dockerfile
-    image: karthigamagesh17/booking:esd
+    image: smuozj/booking:esd
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/tourdb
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3308/tourdb
       PYTHONUNBUFFERED: 1
     ports:
       - "5001:5001"
@@ -29,10 +35,10 @@ services:
     build:
       context: ./
       dockerfile: payment.Dockerfile
-    image: karthigamagesh17/payment:esd
+    image: smuozj/payment:esd
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/tourdb
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3308/tourdb
       PYTHONUNBUFFERED: 1
     ports:
       - "5200:5200"
@@ -60,7 +66,7 @@ services:
     build:
       context: ./
       dockerfile: activity_log.Dockerfile
-    image: karthigamagesh17/activity_log:esd
+    image: smuozj/activity_log:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -77,7 +83,7 @@ services:
     build:
       context: ./
       dockerfile: error.Dockerfile
-    image: karthigamagesh17/error:esd
+    image: smuozj/error:esd
     restart: always
     depends_on:
       - rabbitmq
@@ -93,7 +99,7 @@ services:
     build:
       context: ./
       dockerfile: place_booking.Dockerfile
-    image: karthigamagesh17/place_booking:esd
+    image: smuozj/place_booking:esd
     restart: always
     depends_on:
       - booking
@@ -117,15 +123,117 @@ services:
     build:
       context: ./
       dockerfile: tour.Dockerfile
-    image: karthigamagesh17/tour:esd
+    image: smuozj/tour:esd
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/tourdb
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3308/tourdb
       PYTHONUNBUFFERED: 1
     ports:
       - "5002:5002"
     env_file:
       - .env
+    container_name: tour-service-1
+    networks:
+      - kong-net
+  tour2:
+    build:
+      context: ./
+      dockerfile: tour.Dockerfile
+    image: smuozj/tour:esd
+    restart: always
+    environment:
+      dbURL: mysql+mysqlconnector://root@host.docker.internal:3308/tourdb
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5003:5002"
+    env_file:
+      - .env
+    container_name: tour-service-2
+    networks:
+      - kong-net
+
+
+
+  #######################################
+  # Postgres: The database used by Kong
+  #######################################
+  kong-database:
+    image: postgres:9.6
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  #######################################
+  # Kong database migration
+  #######################################
+  kong-migration:
+    image: kong:2.0.4
+    command: "kong migrations bootstrap"
+    restart: on-failure
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+    depends_on:
+      - kong-database
+
+  #######################################
+  # Kong: The API Gateway
+  #######################################
+  kong:
+    image: kong:2.0.4
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    depends_on:
+      - kong-migration
+    ports:
+      - "8000:8000"
+
+  
+  #######################################
+  # Konga: Kong GUI
+  #######################################
+  konga:
+    image: pantsel/konga
+    restart: always
+    networks:
+        - kong-net
+    environment:
+      DB_ADAPTER: postgres
+      DB_HOST: kong-database
+      DB_USER: kong
+      DB_PASSWORD: password
+      DB_DATABASE: konga_db
+    depends_on:
+      - kong
+    ports:
+      - "1337:1337"
+    volumes:
+      - kongadata:/app/kongadata
 
 
 #rebuild the containers using docker-compose up --build command.
