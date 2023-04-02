@@ -72,7 +72,7 @@ def processPlaceBooking(booking):
         print('\n\n-----Publishing the (order error) message with routing_key=order.error-----')
 
         # invoke_http(error_URL, method="POST", json=order_result)
-        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="booking.error", 
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="booking.error",
             body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
         # make message persistent within the matching queues until it is received by some receiver 
         # (the matching queues have to exist and be durable and bound to the exchange)
