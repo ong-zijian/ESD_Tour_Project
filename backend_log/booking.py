@@ -7,6 +7,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from dotenv import load_dotenv
+from werkzeug.routing import BaseConverter
 
 # To load the environment variable
 load_dotenv()
@@ -29,9 +30,10 @@ class Booking(db.Model):
 
     BID = db.Column(db.Integer, autoincrement=True, primary_key=True)
     startDateTime = db.Column(db.DateTime(timezone=True), primary_key=True)
-    TID = db.Column(db.Integer, nullable=False)
+    TID = db.Column(db.ForeignKey('tours.TID', ondelete='CASCADE'),primary_key=True)
     cName = db.Column(db.String(256), nullable=False)
-    Postcode = db.Column(db.String(6), nullable=False)
+    Email = db.Column(db.String(256), nullable=False)
+    Price = db.Column(db.Float, nullable=False)
 
     def json(self):
         dto = {
@@ -39,9 +41,60 @@ class Booking(db.Model):
             'startDateTime': self.startDateTime,
             'Tour_ID': self.TID,
             'cName': self.cName,
-            'Postcode': self.Postcode
+            'Email': self.Email,
+            "Price": self.Price
         }
         return dto
+    
+
+# Create Class for the Tour
+class Tour(db.Model):
+    __tablename__ = 'tours'
+
+    TID = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    Title = db.Column(db.String(64), nullable=False)
+    Description = db.Column(db.String(1000), nullable=False)
+    Postcode = db.Column(db.String(6), nullable=False)
+    Price = db.Column(db.Float, nullable=False)
+
+    def json(self):
+        dto = {
+            'Tour_ID': self.TID,
+            'Title':self.Title,
+            'Description': self.Description,
+            'Postcode': self.Postcode,
+            "Price": self.Price
+        }
+        dto['details'] = []
+        for detail in self.idv_tours:
+            dto['details'].append(detail.json())
+
+        return dto
+
+# Create Class for the Idv_Tour
+class idv_tours(db.Model):
+    __tablename__ = 'idv_tours'
+
+    startDateTime = db.Column(db.DateTime(timezone=True), primary_key=True)
+    TID = db.Column(db.ForeignKey('tours.TID', ondelete='CASCADE'), primary_key=True, nullable=False)
+    endDateTime = db.Column(db.DateTime(timezone=True))
+    TotalSlot = db.Column(db.Integer, nullable=False)
+    TakenSlot = db.Column(db.Integer, nullable=False)
+
+    tour = db.relationship("Tour", primaryjoin="idv_tours.TID == Tour.TID", backref="idv_tours")
+    def json(self):
+        return {'TID':self.TID, 'startDateTime':self.startDateTime, 'endDateTime':self.endDateTime, 'TotalSlot':self.TotalSlot, 'TakenSlot':self.TakenSlot}
+    
+class DateTimeConverter(BaseConverter):
+    """Custom converter for datetime objects."""
+
+    def to_python(self, value):
+        return datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+
+    def to_url(self, value):
+        return value.strftime('%Y-%m-%dT%H:%M:%S')
+    
+app.url_map.converters['datetime'] = lambda pattern: DateTimeConverter(pattern)
 
 
 
@@ -91,11 +144,11 @@ def create_booking():
     cName = request.json.get("cName", None)
     TourID = request.json.get("TID", None)
     startDateTime = request.json.get("startDateTime", None)
-    Postcode = request.json.get("Postcode", None)
+    Email = request.json.get("Email", None)
+    Price = request.json.get("Price", None)
 
 
-    booking = Booking(cName=cName, TID=TourID, startDateTime=startDateTime, Postcode=Postcode)
-
+    booking = Booking(cName=cName, TID=TourID, startDateTime=startDateTime, Email=Email, Price=Price)
 
     try:
         with db.session.begin():

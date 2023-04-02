@@ -1,21 +1,23 @@
 <template>
-    <div class="b-example-divider"></div>
-    <div class="container col-xxl-8 px-4 py-5">
-    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-      <div class="col-10 col-sm-8 col-lg-6">
-        <img src="../assets/logo.png" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
-      </div>
-      <div class="col-lg-6">
-        <h1 class="display-5 fw-bold lh-1 mb-3">Tour Site</h1>
-        <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Incidunt porro cum consequatur accusantium obcaecati ea explicabo adipisci laudantium odio aspernatur, enim delectus! Quasi animi minus, sint asperiores fugit cupiditate dolorum?</p>
-        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-          <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Primary</button>
-          <button type="button" class="btn btn-outline-secondary btn-lg px-4">Default</button>
+  <div>
+    <section class="wave-bg-blue py-5 py-xl-8 py-xxl-10">
+      <div class="container overflow-hidden">
+        <div class="row gy-5 gy-lg-0 align-items-lg-center justify-content-lg-between">
+          <div class="col-12 col-lg-6 order-1 order-lg-0">
+            <h1 class="display-3 fw-bolder mb-3">We connect locality and tourism <br><mark class="wave-highlight wave-highlight-blue"><span class="wave-font-hw display-2 text-accent fw-normal"> on a whole new level</span></mark></h1>
+            <p class="fs-4 mb-5">Our platform is designed to be user-friendly, secured and ensure a good experience for both tourists and local guides.</p>
+            <div class="d-grid gap-2 d-sm-flex">
+              <button onclick="" class="btn btn-primary btn-2xl rounded-pill px-4 gap-3">Browse tours</button>
+              <button onclick="" class="btn btn-outline-primaryx btn-outline-accent btn-2xl rounded-pill px-4">Be a guide now!</button>
+            </div>
+          </div>
+          <div class="col-12 col-lg-5 text-center">
+            <img class="img-fluid mask-position-center-center mask-repeat-no-repeat mask-size-auto" loading="lazy" src="../assets/img/tour-guide-3.jpg" alt="">
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   </div>
-  <div class="b-example-divider"></div>
 </template>
 
 <script>
@@ -23,48 +25,3 @@ export default {
   name: "hero",
 };
 </script>
-
-<style>
-    @media (min-width: 768px) {
-    .bd-placeholder-img-lg {
-        font-size: 3.5rem;
-    }
-    }
-
-    .b-example-divider {
-    height: 3rem;
-    background-color: rgba(0, 0, 0, .1);
-    border: solid rgba(0, 0, 0, .15);
-    border-width: 1px 0;
-    box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-    }
-
-    .b-example-vr {
-    flex-shrink: 0;
-    width: 1.5rem;
-    height: 100vh;
-    }
-
-    .bi {
-    vertical-align: -.125em;
-    fill: currentColor;
-    }
-
-    .nav-scroller {
-    position: relative;
-    z-index: 2;
-    height: 2.75rem;
-    overflow-y: hidden;
-    }
-
-    .nav-scroller .nav {
-    display: flex;
-    flex-wrap: nowrap;
-    padding-bottom: 1rem;
-    margin-top: -1px;
-    overflow-x: auto;
-    text-align: center;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    }
-</style>

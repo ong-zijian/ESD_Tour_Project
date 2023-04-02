@@ -2,8 +2,9 @@
 import Navbar from "./components/Navbar.vue";
 import Footer from "./components/footer.vue";
 </script>
+
 <template>
-  <Navbar />
+  <navbar />
   <router-view />
   <Footer/>
 </template>
@@ -38,24 +39,13 @@ import Footer from "./components/footer.vue";
 
 </script>
 <style>
-#app {
+/* #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
+} */
 
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
+<style src="./assets/css/wave-bsb.css"></style>

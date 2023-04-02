@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from "vue-router";
+import enquiryformViewVue from "@/views/EnquiryFormView.vue";
+import { createRouter, createWebHistory, VueRouter } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 
 const routes = [
@@ -16,6 +17,34 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
+  {
+    path: "/enquiry",
+    name: "enquiry",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/EnquiryFormView.vue"),
+  },
+  {
+    path: "/tourlisting",
+    name: "tourlisting",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/TourListingView.vue"),
+  },
+
+  {
+    path: "/orderForm/:TID/:startDateTime/:Price",
+    name: "orderForm",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/OrderForm.vue"),
+  },
+
+  {
+    path: "/paymentPlaceholder/:BID/:Price",
+    name: "paymentPlaceholder",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/PaymentPlaceholder.vue"),
+  },
+
+
 ];
 
 const router = createRouter({
